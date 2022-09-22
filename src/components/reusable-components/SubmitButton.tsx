@@ -10,7 +10,7 @@ interface PropsI {
 
 export default function SubmitButton({Title, Style, Status, onPressFunc}: PropsI) {
 	return (
-		<TouchableOpacity disabled={Status} onPress={onPressFunc} style={[styles.button, Style]}>
+		<TouchableOpacity disabled={Status} onPress={onPressFunc} style={[styles.button, Style, (Status) ? {opacity: 0.6} : {opapcity: 1}]}>
 			<Text style={styles.text}>{Title}</Text>
 		</TouchableOpacity>
 	);
