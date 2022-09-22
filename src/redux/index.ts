@@ -6,7 +6,7 @@ const userForm: UserFormI = {
 	login: '',
 	password: '',
 	confirmPassword: '',
-	condirionAndTermsStatus: false,
+	conditionAndTermsStatus: false,
 };
 
 const userSlice = createSlice({

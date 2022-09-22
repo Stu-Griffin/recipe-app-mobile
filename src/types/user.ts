@@ -4,12 +4,17 @@ export interface UserFormI {
 	password: string;
 	confirmPassword: string;
 	[index: string]: string|boolean;
-	condirionAndTermsStatus: boolean;
+	conditionAndTermsStatus: boolean;
 }
 
-export interface UserFormIError {
-	name?: boolean|null;
+export interface UserFormIErrorSignIn {
 	email: boolean|null;
 	password: boolean|null;
-	checkPassword?: boolean|null;
+}
+
+export interface UserFormIErrorSignUp {
+	login: boolean|null;
+	email: boolean|null;
+	password: boolean|null;
+	confirmPassword: boolean|null;
 }
