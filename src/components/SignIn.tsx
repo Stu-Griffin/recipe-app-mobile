@@ -1,16 +1,16 @@
 import { RootState } from '../redux';
-import { changeUserForm } from '../redux';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import InputArea from './reusable-components/InputArea';
+import { changeUserForm, reseteUserForm } from '../redux';
 import SubmitButton from './reusable-components/SubmitButton';
 import { UserFormIErrorSignIn, UserFormI } from '../types/user';
+import { StyleSheet, View, Text, Pressable } from 'react-native';
 import emailValidation from '../extra-functions/email-validation';
 import regularValidation from '../extra-functions/regular-validation';
 
-export default function SignIn() {
+export default function SignIn({navigation}: any) {
 	const dispatch = useDispatch();
 	const user: UserFormI = useSelector((store: RootState) => store);
 	const [buttonStatus, setButtonStatus] = useState<boolean>(false);
@@ -24,9 +24,15 @@ export default function SignIn() {
 		console.log('sign in');
 	};
 
-	const refreshFunc = () => {
-		setError({email: null, password: null});
+	const refreshFunc = (): void => {
 		setButtonStatus(false);
+		setError({email: null, password: null});
+	};
+
+	const navigateLinkFunc = (): void => {
+		refreshFunc();
+		dispatch(reseteUserForm());
+		navigation.navigate('sign-up');
 	};
 
 	return (
@@ -64,7 +70,12 @@ export default function SignIn() {
 				Status={!buttonStatus}
 				onPressFunc={buttonAction}
 			/>
-			<Text style={{marginTop: 20, fontSize: 14}}>Don’t have an account?  <Text style={styles.link}>Sign up</Text></Text>
+			<View style={[styles.linkArea, {marginTop: 20}]}>
+				<Text style={{fontSize: 14}}>Don’t have an account?</Text>
+				<Pressable style={{marginLeft: 10}} onPress={navigateLinkFunc}>
+					<Text style={styles.link}>Sign up</Text>
+				</Pressable>
+			</View>
 			<StatusBar style="auto" />
 		</View>
 	);
@@ -86,6 +97,10 @@ const styles = StyleSheet.create({
 	form: {
 		marginTop: 50,
 		justifyContent: 'space-around',
+	},
+	linkArea: {
+		alignItems: 'center',
+		flexDirection: 'row',
 	},
 	link: {
 		color: '#FF9C00',

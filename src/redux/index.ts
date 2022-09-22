@@ -16,10 +16,17 @@ const userSlice = createSlice({
 		changeUserForm: (state, action) => {
 			state[action.payload.key] = action.payload.value;
 		},
+		reseteUserForm: (state) => {
+			state.email = '';
+			state.login = '';
+			state.password = '';
+			state.confirmPassword = '';
+			state.conditionAndTermsStatus = false;
+		},
 	}
 });
 
-export const { changeUserForm } = userSlice.actions;
+export const { changeUserForm, reseteUserForm } = userSlice.actions;
 
 export type RootState = ReturnType<typeof userSlice.reducer>;
 

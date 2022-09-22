@@ -1,17 +1,17 @@
 import Checkbox from 'expo-checkbox';
 import { RootState } from '../redux';
-import { changeUserForm } from '../redux';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import InputArea from './reusable-components/InputArea';
+import { changeUserForm, reseteUserForm } from '../redux';
 import SubmitButton from './reusable-components/SubmitButton';
 import { UserFormIErrorSignUp, UserFormI } from '../types/user';
+import { StyleSheet, View, Text, Pressable } from 'react-native';
 import emailValidation from '../extra-functions/email-validation';
 import regularValidation from '../extra-functions/regular-validation';
 
-export default function SignUp() {
+export default function SignUp({navigation}: any) {
 	const dispatch = useDispatch();
 	const user: UserFormI = useSelector((store: RootState) => store);
 	const [buttonStatus, setButtonStatus] = useState<boolean>(false);
@@ -29,9 +29,15 @@ export default function SignUp() {
 		dispatch(changeUserForm({value, key: 'conditionAndTermsStatus'}));
 	};
 
-	const refreshFunc = () => {
-		setError({email: null, password: null, login: null, confirmPassword: null});
+	const refreshFunc = (): void => {
 		setButtonStatus(false);
+		setError({email: null, password: null, login: null, confirmPassword: null});
+	};
+
+	const navigateLinkFunc = (): void => {
+		refreshFunc();
+		dispatch(reseteUserForm());
+		navigation.navigate('sign-in');
 	};
 
 	return (
@@ -46,7 +52,7 @@ export default function SignUp() {
 					Title={'Enter Login'}
 					ErrorMsg={'Invalid login'}
 					ErrorStatus={false}
-					ChangeValue={(value: string) => {
+					ChangeValue={(value: string): void => {
 						dispatch(changeUserForm({value, key: 'login'}));
 						setError({...error, login: regularValidation(value)});
 					}}
@@ -56,7 +62,7 @@ export default function SignUp() {
 					Title={'Enter Email'}
 					ErrorMsg={'Invalid email'}
 					ErrorStatus={error.email}
-					ChangeValue={(value: string) => {
+					ChangeValue={(value: string): void => {
 						dispatch(changeUserForm({value, key: 'email'}));
 						setError({...error, email: emailValidation(value)});
 					}}
@@ -66,7 +72,7 @@ export default function SignUp() {
 					Title={'Enter Password'}
 					ErrorMsg={'Invalid Password'}
 					ErrorStatus={error.password}
-					ChangeValue={(value: string) => {
+					ChangeValue={(value: string): void => {
 						dispatch(changeUserForm({value, key: 'password'}));
 						setError({...error, password: regularValidation(value)});
 					}}
@@ -76,7 +82,7 @@ export default function SignUp() {
 					Title={'Confirm Password'}
 					ErrorMsg={'Invalid Password'}
 					ErrorStatus={error.confirmPassword}
-					ChangeValue={(value: string) => {
+					ChangeValue={(value: string): void => {
 						dispatch(changeUserForm({value, key: 'confirmPassword'}));
 						setError({...error, confirmPassword: regularValidation(value)});
 					}}
@@ -94,7 +100,9 @@ export default function SignUp() {
 			/>
 			<View style={[styles.linkArea, {marginTop: 20}]}>
 				<Text style={{fontSize: 14}}>Already a member?</Text>
-				<Text style={styles.link}>Sign In</Text>
+				<Pressable onPress={navigateLinkFunc}>
+					<Text style={styles.link}>Sign Up</Text>
+				</Pressable>
 			</View>
 			<StatusBar style="auto" />
 		</View>
