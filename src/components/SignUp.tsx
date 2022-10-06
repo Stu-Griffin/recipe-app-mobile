@@ -2,18 +2,22 @@ import Checkbox from 'expo-checkbox';
 import { RootState } from '../redux';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
+import { UserFormIErrorSignUp } from '../types/user';
 import { useDispatch, useSelector } from 'react-redux';
 import InputArea from './reusable-components/InputArea';
 import { changeUserForm, reseteUserForm } from '../redux';
 import SubmitButton from './reusable-components/SubmitButton';
-import { UserFormIErrorSignUp, UserFormI } from '../types/user';
 import { StyleSheet, View, Text, Pressable } from 'react-native';
 import emailValidation from '../extra-functions/email-validation';
 import regularValidation from '../extra-functions/regular-validation';
 
-export default function SignUp({navigation}: any) {
+interface PropsI {
+	navigation: any;
+}
+
+export default function SignUp({navigation}: PropsI) {
 	const dispatch = useDispatch();
-	const user: UserFormI = useSelector((store: RootState) => store);
+	const user = useSelector((store: RootState) => store.user);
 	const [buttonStatus, setButtonStatus] = useState<boolean>(false);
 	const [error, setError] = useState<UserFormIErrorSignUp>({email: null, password: null, login: null, confirmPassword: null});
 	
@@ -48,6 +52,7 @@ export default function SignUp({navigation}: any) {
 			</View>
 			<View style={styles.form}>
 				<InputArea
+					Style={{}}
 					Value={user.login}
 					Title={'Enter Login'}
 					ErrorMsg={'Invalid login'}
@@ -58,6 +63,7 @@ export default function SignUp({navigation}: any) {
 					}}
 				/>
 				<InputArea
+					Style={{}}
 					Value={user.email}
 					Title={'Enter Email'}
 					ErrorMsg={'Invalid email'}
@@ -68,6 +74,7 @@ export default function SignUp({navigation}: any) {
 					}}
 				/>
 				<InputArea
+					Style={{}}
 					Value={user.password}
 					Title={'Enter Password'}
 					ErrorMsg={'Invalid Password'}
@@ -78,6 +85,7 @@ export default function SignUp({navigation}: any) {
 					}}
 				/>
 				<InputArea
+					Style={{}}
 					Value={user.confirmPassword}
 					Title={'Confirm Password'}
 					ErrorMsg={'Invalid Password'}

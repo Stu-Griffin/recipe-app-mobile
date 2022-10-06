@@ -1,12 +1,3 @@
-export interface UserFormI {
-	email: string;
-	login: string;
-	password: string;
-	confirmPassword: string;
-	[index: string]: string|boolean;
-	conditionAndTermsStatus: boolean;
-}
-
 export interface UserFormIErrorSignIn {
 	email: boolean|null;
 	password: boolean|null;
@@ -17,4 +8,10 @@ export interface UserFormIErrorSignUp {
 	email: boolean|null;
 	password: boolean|null;
 	confirmPassword: boolean|null;
+}
+export interface RecipeFormIError {
+	type: boolean|null;
+	title: boolean|null;
+	image: boolean|null;
+	description: boolean|null;
 }

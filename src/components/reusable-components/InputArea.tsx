@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 interface PropsI {
+	Style: object;
 	Value: string;
 	Title: string;
 	ErrorMsg: string;
@@ -9,9 +10,9 @@ interface PropsI {
 	ChangeValue: (value: string) => void;
 }
 
-export default function InputArea({Value, ChangeValue, Title, ErrorMsg, ErrorStatus}: PropsI) {
+export default function InputArea({Value, ChangeValue, Title, ErrorMsg, ErrorStatus, Style}: PropsI) {
 	return (
-		<View style={styles.container}>
+		<View style={[styles.container, {...Style}]}>
 			<View style={styles.textArea}>
 				<Text style={styles.title}>{Title}</Text>
 				{(ErrorStatus) && <Text style={styles.error}>{ErrorMsg}</Text>}

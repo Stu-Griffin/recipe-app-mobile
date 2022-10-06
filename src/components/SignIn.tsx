@@ -1,18 +1,22 @@
 import { RootState } from '../redux';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
+import { UserFormIErrorSignIn } from '../types/user';
 import { useDispatch, useSelector } from 'react-redux';
 import InputArea from './reusable-components/InputArea';
 import { changeUserForm, reseteUserForm } from '../redux';
 import SubmitButton from './reusable-components/SubmitButton';
-import { UserFormIErrorSignIn, UserFormI } from '../types/user';
 import { StyleSheet, View, Text, Pressable } from 'react-native';
 import emailValidation from '../extra-functions/email-validation';
 import regularValidation from '../extra-functions/regular-validation';
 
-export default function SignIn({navigation}: any) {
+interface PropsI {
+	navigation: any;
+}
+
+export default function SignIn({navigation}: PropsI) {
 	const dispatch = useDispatch();
-	const user: UserFormI = useSelector((store: RootState) => store);
+	const user = useSelector((store: RootState) => store.user);
 	const [buttonStatus, setButtonStatus] = useState<boolean>(false);
 	const [error, setError] = useState<UserFormIErrorSignIn>({email: null, password: null});
 	
@@ -43,6 +47,7 @@ export default function SignIn({navigation}: any) {
 			</View>
 			<View style={styles.form}>
 				<InputArea
+					Style={{}}
 					Value={user.email}
 					Title={'Enter Email'}
 					ErrorMsg={'Invalid email'}
@@ -53,6 +58,7 @@ export default function SignIn({navigation}: any) {
 					}}
 				/>
 				<InputArea
+					Style={{}}
 					Value={user.password}
 					Title={'Enter Password'}
 					ErrorMsg={'Invalid Password'}
