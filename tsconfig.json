@@ -22,7 +22,7 @@
 		"jsx": "react-jsx"
 	},
 	"include": [
-		"src/**/*.ts"
+		"src/**/*.ts", "declaration.d.ts"
 	],
 	"extends": "expo/tsconfig.base"
 }

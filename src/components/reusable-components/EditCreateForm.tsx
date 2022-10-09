@@ -1,21 +1,21 @@
-import { RootState } from '../redux';
+import { RootState } from '../../redux';
 import { StatusBar } from 'expo-status-bar';
-import { RecipeFormIError } from '../types/user';
+import { RecipeFormIError } from '../../types/user';
 import {Picker} from '@react-native-picker/picker';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import InputArea from './reusable-components/InputArea';
-import { changeRecipeForm, reseteRecipeForm } from '../redux';
-import SubmitButton from './reusable-components/SubmitButton';
-import InputWithList from './reusable-components/InputWithList';
-import regularValidation from '../extra-functions/regular-validation';
+import InputArea from './InputArea';
+import { changeRecipeForm, reseteRecipeForm } from '../../redux';
+import SubmitButton from './SubmitButton';
+import InputWithList from './InputWithList';
+import regularValidation from '../../extra-functions/regular-validation';
 import { StyleSheet, View, Text, ScrollView, Pressable } from 'react-native';
-
-const typesArr = ['Appetizers', 'Salads', 'Soups', 'Main', 'Desserts'];
 
 interface PropsI {
 	navigation: any;
 }
+
+const typesArr = ['Appetizers', 'Salads', 'Soups', 'Main', 'Desserts'];
 
 export default function EditCreateForm({navigation}: PropsI) {
 	const dispatch = useDispatch();

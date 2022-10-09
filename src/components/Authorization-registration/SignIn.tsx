@@ -1,14 +1,14 @@
-import { RootState } from '../redux';
+import { RootState } from '../../redux';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { UserFormIErrorSignIn } from '../types/user';
 import { useDispatch, useSelector } from 'react-redux';
-import InputArea from './reusable-components/InputArea';
-import { changeUserForm, reseteUserForm } from '../redux';
-import SubmitButton from './reusable-components/SubmitButton';
+import { UserFormIErrorSignIn } from '../../types/user';
+import InputArea from '../reusable-components/InputArea';
+import { changeUserForm, reseteUserForm } from '../../redux';
+import SubmitButton from '../reusable-components/SubmitButton';
 import { StyleSheet, View, Text, Pressable } from 'react-native';
-import emailValidation from '../extra-functions/email-validation';
-import regularValidation from '../extra-functions/regular-validation';
+import emailValidation from '../../extra-functions/email-validation';
+import regularValidation from '../../extra-functions/regular-validation';
 
 interface PropsI {
 	navigation: any;

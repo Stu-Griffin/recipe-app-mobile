@@ -3,6 +3,7 @@ import { createSlice, configureStore } from '@reduxjs/toolkit';
 const userForm: any = {
 	email: '',
 	login: '',
+	avatar: '',
 	password: '',
 	confirmPassword: '',
 	conditionAndTermsStatus: false,
