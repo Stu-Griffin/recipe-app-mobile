@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { changeUserForm, RootState } from '../../redux';
 import { useDispatch, useSelector } from 'react-redux';
+import { changeUserForm, RootState } from '../../redux';
 import InputArea from '../reusable-components/InputArea';
+import FilterSettingsIcon from '../../../assets/icons/filter-setting.svg';
 import { StyleSheet, View, Text, Image, FlatList, TouchableOpacity } from 'react-native';
 
 interface PropsI {
@@ -51,7 +52,7 @@ export default function Home({navigation}: PropsI) {
 					}}
 				/>
 				<TouchableOpacity style={styles.settingBtn}>
-					<Image style={styles.settingIcon} source={require('../../../assets/icons/settings.png')} />
+					<FilterSettingsIcon width={40} height={40} style={styles.settingIcon} />
 				</TouchableOpacity>
 			</View>
 			<View style={styles.navigationArea}>
@@ -104,8 +105,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between'
 	},
 	settingBtn: {
-		width: 40,
-		height: 40,
 		marginTop: 35,
 		borderRadius: 10,
 		alignItems: 'center',

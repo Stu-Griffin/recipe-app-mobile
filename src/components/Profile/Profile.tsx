@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { changeUserForm, RootState } from '../../redux';
 import { useDispatch, useSelector } from 'react-redux';
+import { changeUserForm, RootState } from '../../redux';
 import InputArea from '../reusable-components/InputArea';
-import { StyleSheet, View, Image, Text, Pressable, TouchableOpacity } from 'react-native';
+import AddButton from '../../../assets/icons/add-button.svg';
 import SubmitButton from '../reusable-components/SubmitButton';
+import ArrowLeftIcon from '../../../assets/icons/arrow-left.svg';
 import emailValidation from '../../extra-functions/email-validation';
 import regularValidation from '../../extra-functions/regular-validation';
+import { StyleSheet, View, Image, Text, Pressable, TouchableOpacity } from 'react-native';
 
 interface PropsI {
 	navigation: any;
@@ -34,7 +36,7 @@ export default function Profile({navigation}: PropsI) {
 		<View style={styles.container}>
 			<View style={styles.pageTitleArea}>
 				<TouchableOpacity onPress={move}>
-					<Image style={styles.goBackIcon} source={require('../../../assets/icons/arrow-left.png')} />
+					<ArrowLeftIcon style={styles.goBackIcon} width={30} height={30}/>
 				</TouchableOpacity>
 				<Text style={styles.pageTitle}>Profile</Text>
 			</View>
@@ -46,7 +48,7 @@ export default function Profile({navigation}: PropsI) {
 					}}
 				/>
 				<Pressable onPress={changeAvatar}>
-					<Image style={styles.addIcon} source={require('../../../assets/icons/add.png')} />
+					<AddButton width={40} height={40} style={styles.addIcon}/>
 				</Pressable>
 			</View>
 			<InputArea
@@ -128,14 +130,10 @@ const styles = StyleSheet.create({
 	addIcon: {
 		top: -30,
 		left: 30,
-		width: 40,
-		height: 40,
 		position: 'absolute',
 	},
 	goBackIcon: {
 		left: -100,
-		width: 30,
-		height: 30,
 		position: 'absolute',
 	}
 });

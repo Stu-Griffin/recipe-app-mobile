@@ -1,6 +1,7 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
+import ArrowLeftIcon from '../../../assets/icons/arrow-left.svg';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
 interface PropsI {
 	navigation: any;
@@ -15,7 +16,7 @@ export default function AuthoreRecepies({navigation}: PropsI) {
 		<View style={styles.container}>
 			<View style={styles.pageTitleArea}>
 				<TouchableOpacity onPress={move}>
-					<Image style={styles.goBackIcon} source={require('../../../assets/icons/arrow-left.png')} />
+					<ArrowLeftIcon style={styles.goBackIcon} width={30} height={30}/>
 				</TouchableOpacity>
 				<Text style={styles.pageTitle}>Recepies</Text>
 			</View>
@@ -43,8 +44,6 @@ const styles = StyleSheet.create({
 	},
 	goBackIcon: {
 		left: -100,
-		width: 30,
-		height: 30,
 		position: 'absolute',
 	}
 });
