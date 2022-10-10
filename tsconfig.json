@@ -1,28 +1,22 @@
 {
 	"compilerOptions": {
-		"target": "es5",
-		"downlevelIteration": true,
-		"lib": [
-			"dom",
-			"dom.iterable",
-			"esnext"
-		],
+		"noEmit": true,
+		"strict": true,
+		"target": "es6",
 		"allowJs": true,
+		"jsx": "react-jsx",
+		"module": "esnext",
 		"skipLibCheck": true,
 		"esModuleInterop": true,
-		"allowSyntheticDefaultImports": true,
-		"strict": true,
-		"forceConsistentCasingInFileNames": true,
-		"noFallthroughCasesInSwitch": true,
-		"module": "esnext",
-		"moduleResolution": "node",
-		"resolveJsonModule": true,
 		"isolatedModules": true,
-		"noEmit": true,
-		"jsx": "react-jsx"
+		"resolveJsonModule": true,
+		"downlevelIteration": true,
+		"moduleResolution": "node",
+		"noFallthroughCasesInSwitch": true,
+		"allowSyntheticDefaultImports": true,
+		"forceConsistentCasingInFileNames": true,
+		"lib": [ "dom", "dom.iterable", "esnext" ],
 	},
-	"include": [
-		"src/**/*.ts", "declaration.d.ts"
-	],
-	"extends": "expo/tsconfig.base"
+	"extends": "expo/tsconfig.base",
+	"include": [ "src", "declaration.d.ts" ],
 }

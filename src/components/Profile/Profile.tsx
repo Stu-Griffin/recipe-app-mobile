@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeUserForm, RootState } from '../../redux';
 import InputArea from '../reusable-components/InputArea';
+import { changeUserForm, UserRootState } from '../../redux';
 import AddButton from '../../../assets/icons/add-button.svg';
 import SubmitButton from '../reusable-components/SubmitButton';
 import ArrowLeftIcon from '../../../assets/icons/arrow-left.svg';
 import emailValidation from '../../extra-functions/email-validation';
 import regularValidation from '../../extra-functions/regular-validation';
-import { StyleSheet, View, Image, Text, Pressable, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Image, Text, Pressable, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 
 interface PropsI {
 	navigation: any;
@@ -16,10 +16,14 @@ interface PropsI {
 
 export default function Profile({navigation}: PropsI) {
 	const dispatch = useDispatch();
-	const { avatar } = useSelector((store: RootState) => store.user);
+	const { avatar } = useSelector((store: UserRootState) => store.user);
 	const [user, setUser] = useState({login: '', email: '', password: ''});
 	const [error, setError] = useState({login: false, email: false, password: false});
 	
+	const move = () => {
+		navigation.navigate('home');
+	};
+
 	const buttonAction = () => {
 		console.log('change user', user);
 	};
@@ -27,13 +31,9 @@ export default function Profile({navigation}: PropsI) {
 	const changeAvatar = () => {
 		console.log('img');
 	};
-
-	const move = () => {
-		navigation.navigate('home');
-	};
 	
 	return (
-		<View style={styles.container}>
+		<SafeAreaView style={styles.container}>
 			<View style={styles.pageTitleArea}>
 				<TouchableOpacity onPress={move}>
 					<ArrowLeftIcon style={styles.goBackIcon} width={30} height={30}/>
@@ -51,47 +51,49 @@ export default function Profile({navigation}: PropsI) {
 					<AddButton width={40} height={40} style={styles.addIcon}/>
 				</Pressable>
 			</View>
-			<InputArea
-				Style={{}}
-				Value={user.login}
-				Title={'Change Login'}
-				ErrorMsg={'Invalid login'}
-				ErrorStatus={error.login}
-				ChangeValue={(value: string) => {
-					setUser({...user, login: value});
-					setError({...error, email: regularValidation(value)});
-				}}
-			/>
-			<InputArea
-				Style={{}}
-				Value={user.email}
-				Title={'Change Email'}
-				ErrorMsg={'Invalid email'}
-				ErrorStatus={error.email}
-				ChangeValue={(value: string) => {
-					setUser({...user, email: value});
-					setError({...error, email: emailValidation(value)});
-				}}
-			/>
-			<InputArea
-				Style={{}}
-				Value={user.password}
-				Title={'Change Password'}
-				ErrorMsg={'Invalid password'}
-				ErrorStatus={error.password}
-				ChangeValue={(value: string) => {
-					setUser({...user, password: value});
-					setError({...error, email: regularValidation(value)});
-				}}
-			/>
-			<SubmitButton
-				Title={'Commit changes'}
-				Style={styles.button}
-				Status={false}
-				onPressFunc={buttonAction}
-			/>
+			<ScrollView style={styles.form}>
+				<InputArea
+					Style={{}}
+					Value={user.login}
+					Title={'Change Login'}
+					ErrorMsg={'Invalid login'}
+					ErrorStatus={error.login}
+					ChangeValue={(value: string) => {
+						setUser({...user, login: value});
+						setError({...error, email: regularValidation(value)});
+					}}
+				/>
+				<InputArea
+					Style={{}}
+					Value={user.email}
+					Title={'Change Email'}
+					ErrorMsg={'Invalid email'}
+					ErrorStatus={error.email}
+					ChangeValue={(value: string) => {
+						setUser({...user, email: value});
+						setError({...error, email: emailValidation(value)});
+					}}
+				/>
+				<InputArea
+					Style={{}}
+					Value={user.password}
+					Title={'Change Password'}
+					ErrorMsg={'Invalid password'}
+					ErrorStatus={error.password}
+					ChangeValue={(value: string) => {
+						setUser({...user, password: value});
+						setError({...error, email: regularValidation(value)});
+					}}
+				/>
+				<SubmitButton
+					Title={'Commit changes'}
+					Style={styles.button}
+					Status={false}
+					onPressFunc={buttonAction}
+				/>
+			</ScrollView>
 			<StatusBar style="auto" />
-		</View>
+		</SafeAreaView>
 	);
 }
 
@@ -111,6 +113,9 @@ const styles = StyleSheet.create({
 		marginTop: 30,
 		alignItems: 'center',
 		justifyContent: 'center',
+	},
+	form: {
+		marginTop: 10
 	},
 	avatar: {
 		width: 200,

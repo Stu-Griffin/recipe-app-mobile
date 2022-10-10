@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
+import React, { useEffect, useState } from 'react';
+import userAPIActions from '../../api-actions/user';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeUserForm, RootState } from '../../redux';
+import { showMessage } from 'react-native-flash-message';
 import InputArea from '../reusable-components/InputArea';
+import AddIcon from '../../../assets/icons/add-button.svg';
+import ProfileIcon from '../../../assets/avatars/avatar.svg';
+import { changeUser, UserRootState, setUser } from '../../redux';
 import FilterSettingsIcon from '../../../assets/icons/filter-setting.svg';
-import { StyleSheet, View, Text, Image, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
+import { getTypeForFlashMsg, getMessageForFlashMsg } from '../../extra-functions/flash-message';
 
 interface PropsI {
 	navigation: any;
@@ -15,7 +20,41 @@ const typesArr = ['All', 'Appetizers', 'Salads', 'Soups', 'Main', 'Desserts'];
 export default function Home({navigation}: PropsI) {
 	const dispatch = useDispatch();
 	const [search, setSearch] = useState('');
-	const user = useSelector((store: RootState) => store.user);
+	const user = useSelector((store: UserRootState) => store.user);
+	
+	useEffect(() => {
+		(async (): Promise<void> => {
+			try {
+				const {data, status} = await userAPIActions.getUser(user.id || '6343c69dab75c7cd862d045b');
+				if(status === 200) {
+					dispatch(setUser({
+						id: data['_id'],
+						login: data?.login,
+						email: data?.email,
+						avatar: data?.avatar,
+					}));
+				} else {
+					showMessage({
+						duration: 5000,
+						description: data,
+						type: getTypeForFlashMsg(status),
+						message: getMessageForFlashMsg(status),
+					});
+				}
+			} catch (error) {
+				console.log(error);
+			}
+		})();
+	}, [user.id]);
+
+	const move = () => {
+		// console.log(`https://api-recipe.herokuapp.com/${user.avatar}`);
+		navigation.navigate('profile-page');
+	};
+
+	const addRecipe = () => {
+		navigation.navigate('profile-page');
+	};
 
 	const renderItem = ({ item }) => {
 		return(
@@ -23,10 +62,6 @@ export default function Home({navigation}: PropsI) {
 				<Text style={styles.recipesBtnTitle}>{item}</Text>
 			</TouchableOpacity>
 		);
-	};
-
-	const move = () => {
-		navigation.navigate('profile-page');
 	};
 
 	return (
@@ -37,7 +72,18 @@ export default function Home({navigation}: PropsI) {
 					<Text style={styles.text}>What are you cooking today?</Text>
 				</View>
 				<TouchableOpacity onPress={move}>
-					<View style={styles.avatarArea}></View>
+					<View style={styles.avatarArea}>
+						{
+							(user.avatar.split('.')[1] === 'svg') ?
+								<ProfileIcon width={40} height={40} /> : 
+								<Image
+									style={styles.avatar}
+									source={{
+										uri: `https://api-recipe.herokuapp.com/${user.avatar}`,
+									}}
+								/>
+						}
+					</View>
 				</TouchableOpacity>
 			</View>
 			<View style={styles.searchArea}>
@@ -62,6 +108,11 @@ export default function Home({navigation}: PropsI) {
 					renderItem={renderItem}
 					keyExtractor={(item: string, id: number) => id.toString()}
 				/>
+			</View>
+			<View style={styles.addRecipeBtn}>
+				<TouchableOpacity onPress={addRecipe}>
+					<AddIcon width={55} height={55}/>
+				</TouchableOpacity>
 			</View>
 			<StatusBar style="auto" />
 		</View>
@@ -98,6 +149,16 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		backgroundColor: '#FFCE80',
+	},
+	addRecipeBtn: {
+		top: 475,
+		position: 'relative',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	avatar: {
+		width: 40,
+		height: 40
 	},
 	searchArea: {
 		flexDirection: 'row',

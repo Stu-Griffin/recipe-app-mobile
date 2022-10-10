@@ -60,7 +60,7 @@ function AuthirizationNavigation() {
 export default function Navigation() {
 	return (
 		<NavigationContainer>
-			<Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="profile-page">
+			<Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="home-page">
 				<Stack.Screen name="home-page" component={HomeNavigation} />
 				<Stack.Screen name="authorization-page" component={AuthirizationNavigation} />
 			</Stack.Navigator>

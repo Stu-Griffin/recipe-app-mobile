@@ -1,14 +1,5 @@
 import { createSlice, configureStore } from '@reduxjs/toolkit';
 
-const userForm: any = {
-	email: '',
-	login: '',
-	avatar: '',
-	password: '',
-	confirmPassword: '',
-	conditionAndTermsStatus: false,
-};
-
 const recipeFrom: any = {
 	rate: 0,
 	type: '',
@@ -20,8 +11,22 @@ const recipeFrom: any = {
 	description: '',
 	ingredients: [],
 };
+const userForm: any = {
+	email: '',
+	login: '',
+	avatar: '',
+	password: '',
+	confirmPassword: '',
+	conditionAndTermsStatus: false,
+};
+const user: any = {
+	id: '',
+	login: '',
+	email: '',
+	avatar: '',
+};
 
-const recipeSlice = createSlice({
+const recipeFormSlice = createSlice({
 	name: 'recipeFrom',
 	initialState: recipeFrom,
 	reducers: {
@@ -45,8 +50,7 @@ const recipeSlice = createSlice({
 		},
 	}
 });
-
-const userSlice = createSlice({
+const userFormSlice = createSlice({
 	name: 'userForm',
 	initialState: userForm,
 	reducers: {
@@ -62,10 +66,32 @@ const userSlice = createSlice({
 		},
 	}
 });
-export type RootState = ReturnType<typeof userSlice.reducer>;
+const userSlice = createSlice({
+	name: 'user',
+	initialState: user,
+	reducers: {
+		setUser: (state, action) => {
+			state = action.payload;
+			return state;
+		},
+		changeUser: (state, action) => {
+			state[action.payload.key] = action.payload.value;
+		},
+		reseteUser: (state) => {
+			state.id = '';
+			state.login = '';
+			state.email = '';
+			state.avatar = '';
+		},
+	}
+});
 
-export const { changeUserForm, reseteUserForm } = userSlice.actions;
+export type UserRootState = ReturnType<typeof userSlice.reducer>;
+export type UserFormRootState = ReturnType<typeof userFormSlice.reducer>;
+export type RecipeFormRootState = ReturnType<typeof recipeFormSlice.reducer>;
 
-export const { changeRecipeForm, reseteRecipeForm } = recipeSlice.actions;
+export const { changeUser, reseteUser, setUser } = userSlice.actions;
+export const { changeUserForm, reseteUserForm } = userFormSlice.actions;
+export const { changeRecipeForm, reseteRecipeForm } = recipeFormSlice.actions;
 
-export const store = configureStore({ reducer: {user: userSlice.reducer, recipe: recipeSlice.reducer} });
+export const store = configureStore({ reducer: {user: userSlice.reducer, userForm: userFormSlice.reducer, recipeForm: recipeFormSlice.reducer} });

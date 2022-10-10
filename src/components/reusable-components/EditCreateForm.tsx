@@ -1,4 +1,4 @@
-import { RootState } from '../../redux';
+import { RecipeFormRootState } from '../../redux';
 import { StatusBar } from 'expo-status-bar';
 import { RecipeFormIError } from '../../types/user';
 import {Picker} from '@react-native-picker/picker';
@@ -19,7 +19,7 @@ const typesArr = ['Appetizers', 'Salads', 'Soups', 'Main', 'Desserts'];
 
 export default function EditCreateForm({navigation}: PropsI) {
 	const dispatch = useDispatch();
-	const recipe = useSelector((store: RootState) => store.recipe);
+	const recipe = useSelector((store: RecipeFormRootState) => store.recipeForm);
 	const [buttonStatus, setButtonStatus] = useState<boolean>(false);
 	const [error, setError] = useState<RecipeFormIError>({title: null, description: null, image: null, type: null});
 

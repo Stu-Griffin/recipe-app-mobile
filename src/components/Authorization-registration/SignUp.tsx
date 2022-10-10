@@ -1,15 +1,18 @@
 import Checkbox from 'expo-checkbox';
-import { RootState } from '../../redux';
 import { StatusBar } from 'expo-status-bar';
+import { UserFormRootState } from '../../redux';
 import React, { useEffect, useState } from 'react';
+import userAPIActions from '../../api-actions/user';
 import { useDispatch, useSelector } from 'react-redux';
 import { UserFormIErrorSignUp } from '../../types/user';
 import InputArea from '../reusable-components/InputArea';
+import { showMessage } from 'react-native-flash-message';
 import { changeUserForm, reseteUserForm } from '../../redux';
 import SubmitButton from '../reusable-components/SubmitButton';
-import { StyleSheet, View, Text, Pressable } from 'react-native';
 import emailValidation from '../../extra-functions/email-validation';
 import regularValidation from '../../extra-functions/regular-validation';
+import { StyleSheet, View, Text, Pressable, SafeAreaView, ScrollView } from 'react-native';
+import { getTypeForFlashMsg, getMessageForFlashMsg } from '../../extra-functions/flash-message';
 
 interface PropsI {
 	navigation: any;
@@ -17,40 +20,53 @@ interface PropsI {
 
 export default function SignUp({navigation}: PropsI) {
 	const dispatch = useDispatch();
-	const user = useSelector((store: RootState) => store.user);
 	const [buttonStatus, setButtonStatus] = useState<boolean>(false);
+	const user = useSelector((store: UserFormRootState) => store.userForm);
 	const [error, setError] = useState<UserFormIErrorSignUp>({email: null, password: null, login: null, confirmPassword: null});
 	
 	useEffect((): void => {
 		setButtonStatus((Object.values(error).every((el: boolean) => el === false)) && user.conditionAndTermsStatus);
 	}, [error, user.conditionAndTermsStatus]);
 
-	const buttonAction = (): void => {
-		console.log('sign up');
+	const refreshFunc = (): void => {
+		setButtonStatus(false);
+		setError({email: null, password: null, login: null, confirmPassword: null});
 	};
 
 	const checkBoxFunc = (value: boolean): void => {
 		dispatch(changeUserForm({value, key: 'conditionAndTermsStatus'}));
 	};
 
-	const refreshFunc = (): void => {
-		setButtonStatus(false);
-		setError({email: null, password: null, login: null, confirmPassword: null});
+	const buttonAction = async (): Promise<void> => {
+		try {
+			const {data, status} = await userAPIActions.signUpUser({email: user.email, password: user.password, login: user.login});
+			showMessage({
+				duration: 5000,
+				description: data,
+				type: getTypeForFlashMsg(status),
+				message: getMessageForFlashMsg(status),
+			});
+			if(status === 200) {
+				navigateLinkFunc('');
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
-	const navigateLinkFunc = (): void => {
+	const navigateLinkFunc = (route: string): void => {
 		refreshFunc();
 		dispatch(reseteUserForm());
-		navigation.navigate('sign-in');
+		navigation.navigate(route);
 	};
 
 	return (
-		<View style={styles.container}>
+		<SafeAreaView style={styles.container}>
 			<View>
 				<Text style={styles.title}>Create an account</Text>
 				<Text style={styles.text}>Let’s help you set up your account, it won’t take long.</Text>
 			</View>
-			<View style={styles.form}>
+			<ScrollView style={{marginTop: 10}}>
 				<InputArea
 					Style={{}}
 					Value={user.login}
@@ -99,21 +115,21 @@ export default function SignUp({navigation}: PropsI) {
 					<Checkbox color={'#FF9C00'} style={styles.checkbox} value={user.conditionAndTermsStatus} onValueChange={checkBoxFunc} />
 					<Text style={styles.link}>Accept terms & Condition</Text>
 				</View>
-			</View>
-			<SubmitButton
-				Title={'Sign In'}
-				Style={styles.button}
-				Status={!buttonStatus}
-				onPressFunc={buttonAction}
-			/>
-			<View style={[styles.linkArea, {marginTop: 20}]}>
-				<Text style={{fontSize: 14}}>Already a member?</Text>
-				<Pressable onPress={navigateLinkFunc}>
-					<Text style={styles.link}>Sign Up</Text>
-				</Pressable>
-			</View>
+				<SubmitButton
+					Title={'Sign Up'}
+					Style={styles.button}
+					Status={!buttonStatus}
+					onPressFunc={buttonAction}
+				/>
+				<View style={[styles.linkArea, {marginTop: 20}]}>
+					<Text style={{fontSize: 14}}>Already a member?</Text>
+					<Pressable onPress={() => navigateLinkFunc('sign-in')}>
+						<Text style={styles.link}>Sign Up</Text>
+					</Pressable>
+				</View>
+			</ScrollView>
 			<StatusBar style="auto" />
-		</View>
+		</SafeAreaView>
 	);
 }
 
@@ -129,10 +145,6 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		fontSize: 20,
-	},
-	form: {
-		marginTop: 50,
-		justifyContent: 'space-around',
 	},
 	linkArea: {
 		alignItems: 'center',

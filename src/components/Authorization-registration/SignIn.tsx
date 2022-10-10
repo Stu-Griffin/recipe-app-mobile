@@ -1,14 +1,17 @@
-import { RootState } from '../../redux';
 import { StatusBar } from 'expo-status-bar';
+import { UserFormRootState } from '../../redux';
 import React, { useEffect, useState } from 'react';
+import userAPIActions from '../../api-actions/user';
 import { useDispatch, useSelector } from 'react-redux';
 import { UserFormIErrorSignIn } from '../../types/user';
+import { showMessage } from 'react-native-flash-message';
 import InputArea from '../reusable-components/InputArea';
-import { changeUserForm, reseteUserForm } from '../../redux';
 import SubmitButton from '../reusable-components/SubmitButton';
-import { StyleSheet, View, Text, Pressable } from 'react-native';
 import emailValidation from '../../extra-functions/email-validation';
 import regularValidation from '../../extra-functions/regular-validation';
+import { changeUserForm, reseteUserForm, changeUser } from '../../redux';
+import { StyleSheet, View, Text, Pressable, SafeAreaView } from 'react-native';
+import { getTypeForFlashMsg, getMessageForFlashMsg } from '../../extra-functions/flash-message';
 
 interface PropsI {
 	navigation: any;
@@ -16,7 +19,7 @@ interface PropsI {
 
 export default function SignIn({navigation}: PropsI) {
 	const dispatch = useDispatch();
-	const user = useSelector((store: RootState) => store.user);
+	const user = useSelector((store: UserFormRootState) => store.userForm);
 	const [buttonStatus, setButtonStatus] = useState<boolean>(false);
 	const [error, setError] = useState<UserFormIErrorSignIn>({email: null, password: null});
 	
@@ -24,8 +27,29 @@ export default function SignIn({navigation}: PropsI) {
 		setButtonStatus(Object.values(error).every((el: boolean) => el === false));
 	}, [error]);
 
-	const buttonAction = (): void => {
-		console.log('sign in');
+	const buttonAction = async (): Promise<void> => {
+		try {
+			const {data, status} = await userAPIActions.signInUser({email: user.email, password: user.password});
+			if(status === 200) {
+				showMessage({
+					duration: 5000,
+					type: getTypeForFlashMsg(status),
+					message: getMessageForFlashMsg(status),
+					description: 'Authorisation went successful',
+				});
+				dispatch(changeUser({value: data, key: 'id'}));
+				navigateLinkFunc('home-page');
+			} else {
+				showMessage({
+					duration: 5000,
+					description: data,
+					type: getTypeForFlashMsg(status),
+					message: getMessageForFlashMsg(status),
+				});
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	const refreshFunc = (): void => {
@@ -33,14 +57,14 @@ export default function SignIn({navigation}: PropsI) {
 		setError({email: null, password: null});
 	};
 
-	const navigateLinkFunc = (): void => {
+	const navigateLinkFunc = (route: string): void => {
 		refreshFunc();
 		dispatch(reseteUserForm());
-		navigation.navigate('sign-up');
+		navigation.navigate(route);
 	};
 
 	return (
-		<View style={styles.container}>
+		<SafeAreaView style={styles.container}>
 			<View>
 				<Text style={styles.title}>Hello,</Text>
 				<Text style={styles.text}>Welcome Back!</Text>
@@ -78,12 +102,12 @@ export default function SignIn({navigation}: PropsI) {
 			/>
 			<View style={[styles.linkArea, {marginTop: 20}]}>
 				<Text style={{fontSize: 14}}>Don’t have an account?</Text>
-				<Pressable style={{marginLeft: 10}} onPress={navigateLinkFunc}>
+				<Pressable style={{marginLeft: 10}} onPress={() => navigateLinkFunc('sign-up')}>
 					<Text style={styles.link}>Sign up</Text>
 				</Pressable>
 			</View>
 			<StatusBar style="auto" />
-		</View>
+		</SafeAreaView>
 	);
 }
 
