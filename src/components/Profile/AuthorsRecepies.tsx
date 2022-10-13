@@ -8,7 +8,7 @@ interface PropsI {
 }
 
 export default function AuthoreRecepies({navigation}: PropsI) {
-	const move = () => {
+	const move = (): void => {
 		navigation.navigate('home');
 	};
 

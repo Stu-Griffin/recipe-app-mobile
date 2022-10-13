@@ -1,9 +1,9 @@
 import InputArea from './InputArea';
 import uuid from 'react-native-uuid';
-import React, { useState, useEffect } from 'react';
 import { RootState } from '../../redux';
 import SubmitButton from './SubmitButton';
 import { changeRecipeForm } from '../../redux';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import regularValidation from '../../extra-functions/regular-validation';

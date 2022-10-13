@@ -1,3 +1,4 @@
+import { URL } from '../../../config';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import userAPIActions from '../../api-actions/user';
@@ -5,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { showMessage } from 'react-native-flash-message';
 import InputArea from '../reusable-components/InputArea';
 import AddIcon from '../../../assets/icons/add-button.svg';
-import ProfileIcon from '../../../assets/avatars/avatar.svg';
 import { changeUser, UserRootState, setUser } from '../../redux';
 import FilterSettingsIcon from '../../../assets/icons/filter-setting.svg';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
@@ -19,49 +19,50 @@ const typesArr = ['All', 'Appetizers', 'Salads', 'Soups', 'Main', 'Desserts'];
 
 export default function Home({navigation}: PropsI) {
 	const dispatch = useDispatch();
-	const [search, setSearch] = useState('');
-	const user = useSelector((store: UserRootState) => store.user);
-	
-	useEffect(() => {
-		(async (): Promise<void> => {
-			try {
-				const {data, status} = await userAPIActions.getUser(user.id || '6343c69dab75c7cd862d045b');
-				if(status === 200) {
-					dispatch(setUser({
-						id: data['_id'],
-						login: data?.login,
-						email: data?.email,
-						avatar: data?.avatar,
-					}));
-				} else {
-					showMessage({
-						duration: 5000,
-						description: data,
-						type: getTypeForFlashMsg(status),
-						message: getMessageForFlashMsg(status),
-					});
-				}
-			} catch (error) {
-				console.log(error);
-			}
-		})();
+	const [search, setSearch] = useState<string>('');
+	const user: any = useSelector((store: UserRootState) => store.user);
+
+	useEffect((): void => {
+		getUserInf();
 	}, [user.id]);
 
-	const move = () => {
-		// console.log(`https://api-recipe.herokuapp.com/${user.avatar}`);
+	const move = (): void => {
 		navigation.navigate('profile-page');
 	};
 
-	const addRecipe = () => {
+	const addRecipe = (): void => {
 		navigation.navigate('profile-page');
 	};
 
-	const renderItem = ({ item }) => {
+	const renderItem = ({ item }: any) => {
 		return(
 			<TouchableOpacity style={styles.recipesBtn}>
 				<Text style={styles.recipesBtnTitle}>{item}</Text>
 			</TouchableOpacity>
 		);
+	};
+
+	const getUserInf = async (): Promise<void> => {
+		try {
+			const {data, status} = await userAPIActions.getUser(user.id || '6343c69dab75c7cd862d045b');
+			if(status === 200) {
+				dispatch(setUser({
+					id: data['_id'],
+					login: data?.login,
+					email: data?.email,
+					avatar: data?.avatar,
+				}));
+			} else {
+				showMessage({
+					duration: 5000,
+					description: data,
+					type: getTypeForFlashMsg(status),
+					message: getMessageForFlashMsg(status),
+				});
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	return (
@@ -74,14 +75,13 @@ export default function Home({navigation}: PropsI) {
 				<TouchableOpacity onPress={move}>
 					<View style={styles.avatarArea}>
 						{
-							(user.avatar.split('.')[1] === 'svg') ?
-								<ProfileIcon width={40} height={40} /> : 
-								<Image
-									style={styles.avatar}
-									source={{
-										uri: `https://api-recipe.herokuapp.com/${user.avatar}`,
-									}}
-								/>
+							(user.avatar !== '') &&
+							<Image
+								style={styles.avatar}
+								source={{
+									uri: `${URL}${user.avatar}`,
+								}}
+							/>
 						}
 					</View>
 				</TouchableOpacity>
@@ -157,8 +157,9 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 	},
 	avatar: {
-		width: 40,
-		height: 40
+		width: 35,
+		height: 35,
+		borderRadius: 1000
 	},
 	searchArea: {
 		flexDirection: 'row',

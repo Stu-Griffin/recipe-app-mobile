@@ -1,13 +1,13 @@
-import { RecipeFormRootState } from '../../redux';
+import InputArea from './InputArea';
+import SubmitButton from './SubmitButton';
 import { StatusBar } from 'expo-status-bar';
-import { RecipeFormIError } from '../../types/user';
+import InputWithList from './InputWithList';
+import { RecipeFormRootState } from '../../redux';
 import {Picker} from '@react-native-picker/picker';
 import React, { useEffect, useState } from 'react';
+import { RecipeFormIError } from '../../types/user';
 import { useDispatch, useSelector } from 'react-redux';
-import InputArea from './InputArea';
 import { changeRecipeForm, reseteRecipeForm } from '../../redux';
-import SubmitButton from './SubmitButton';
-import InputWithList from './InputWithList';
 import regularValidation from '../../extra-functions/regular-validation';
 import { StyleSheet, View, Text, ScrollView, Pressable } from 'react-native';
 
