@@ -2,6 +2,7 @@ import { URL } from '../../../config';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import userAPIActions from '../../api-actions/user';
+import FlashMessage from 'react-native-flash-message';
 import { useDispatch, useSelector } from 'react-redux';
 import { showMessage } from 'react-native-flash-message';
 import InputArea from '../reusable-components/InputArea';
@@ -26,12 +27,8 @@ export default function Home({navigation}: PropsI) {
 		getUserInf();
 	}, [user.id]);
 
-	const move = (): void => {
-		navigation.navigate('profile-page');
-	};
-
-	const addRecipe = (): void => {
-		navigation.navigate('profile-page');
+	const move = (route: string): void => {
+		navigation.navigate(route);
 	};
 
 	const renderItem = ({ item }: any) => {
@@ -72,7 +69,7 @@ export default function Home({navigation}: PropsI) {
 					<Text style={styles.title}>Hello {user.login}</Text>
 					<Text style={styles.text}>What are you cooking today?</Text>
 				</View>
-				<TouchableOpacity onPress={move}>
+				<TouchableOpacity onPress={() => move('profile-page')}>
 					<View style={styles.avatarArea}>
 						{
 							(user.avatar !== '') &&
@@ -110,11 +107,12 @@ export default function Home({navigation}: PropsI) {
 				/>
 			</View>
 			<View style={styles.addRecipeBtn}>
-				<TouchableOpacity onPress={addRecipe}>
+				<TouchableOpacity onPress={() => move('create')}>
 					<AddIcon width={55} height={55}/>
 				</TouchableOpacity>
 			</View>
 			<StatusBar style="auto" />
+			<FlashMessage position="top"/>
 		</View>
 	);
 }

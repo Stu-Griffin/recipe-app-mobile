@@ -2,35 +2,47 @@ import InputArea from './InputArea';
 import SubmitButton from './SubmitButton';
 import { StatusBar } from 'expo-status-bar';
 import InputWithList from './InputWithList';
-import { RecipeFormRootState } from '../../redux';
-import {Picker} from '@react-native-picker/picker';
+import * as ImagePicker from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
 import { RecipeFormIError } from '../../types/user';
+import { Picker } from '@react-native-picker/picker';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeRecipeForm, reseteRecipeForm } from '../../redux';
 import regularValidation from '../../extra-functions/regular-validation';
-import { StyleSheet, View, Text, ScrollView, Pressable } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, Pressable, Image } from 'react-native';
+import { changeRecipeForm, reseteRecipeForm, RecipeFormRootState } from '../../redux';
 
 interface PropsI {
+	Title: string;
 	navigation: any;
+	submitFunction: (recipe: any) => void;
+}
+
+interface RecipeBufferI {
+	uri: string;
+	type: string;
+	name: string;
+	fileName: string;
 }
 
 const typesArr = ['Appetizers', 'Salads', 'Soups', 'Main', 'Desserts'];
 
-export default function EditCreateForm({navigation}: PropsI) {
+export default function EditCreateForm({navigation, Title, submitFunction}: PropsI) {
 	const dispatch = useDispatch();
-	const recipe = useSelector((store: RecipeFormRootState) => store.recipeForm);
+	const newRecipe: any = new FormData();
 	const [buttonStatus, setButtonStatus] = useState<boolean>(false);
+	const [recipeBuffer, setRecipeBuffer] = useState<RecipeBufferI>();
+	const user = useSelector((store: RecipeFormRootState) => store.user);
+	const recipe = useSelector((store: RecipeFormRootState) => store.recipeForm);
 	const [error, setError] = useState<RecipeFormIError>({title: null, description: null, image: null, type: null});
 
 	useEffect((): void => {
-		console.log(error);
+		dispatch(changeRecipeForm({value: user.id, key: 'authorId'}));
+		dispatch(changeRecipeForm({value: user.login, key: 'authorLogin'}));
+	}, [user]);
+
+	useEffect((): void => {
 		setButtonStatus(Object.values(error).every((el: boolean) => (el===null)?false:((el===false)?true:false)));
 	}, [error]);
-
-	const submitFunction = (): void => {
-		console.log('created');
-	};
 
 	const refreshFunc = (): void => {
 		setButtonStatus(false);
@@ -48,18 +60,48 @@ export default function EditCreateForm({navigation}: PropsI) {
 		setError({...error, type: (value==='') ? true : false});
 	};
 
-	const addImage = (): void => {
-		console.log('image');
+	const createNewRecipeFormData = (): void => {
+		if(!regularValidation(recipe.type)) newRecipe.append('type', recipe.type);
+		if(!regularValidation(recipe.steps)) newRecipe.append('steps', recipe.steps);
+		if(!regularValidation(recipe.title)) newRecipe.append('title', recipe.title);
+		if(!regularValidation(recipe.image)) newRecipe.append('image', recipeBuffer);
+		if(!regularValidation(recipe.authorId)) newRecipe.append('authorId', recipe.authorId);
+		if(!regularValidation(recipe.authorLogin)) newRecipe.append('authorLogin', recipe.authorLogin);
+		if(!regularValidation(recipe.description)) newRecipe.append('description', recipe.description);
+		if(!regularValidation(recipe.ingredients)) newRecipe.append('ingredients', recipe.ingredients);
+	};
+
+	const pickImage = async () => {
+		// No permissions request is necessary for launching the image library
+		const { uri, cancelled }: any = await ImagePicker.launchImageLibraryAsync({
+			quality: 1,
+			aspect: [4, 3],
+			allowsEditing: true,
+			mediaTypes: ImagePicker.MediaTypeOptions.All,
+		});
+		const imageExtension: string = uri.split('.').reverse()[0];
+		if (!cancelled) {
+			setRecipeBuffer({
+				uri: uri,
+				fileName: 'image',
+				type: `image/${imageExtension}`,
+				name: `avatar.${imageExtension}`,
+			});
+			dispatch(changeRecipeForm({value :uri, key: 'image'}));
+		}
 	};
 	
 	return (
 		<ScrollView style={styles.container}>
-			<Text style={styles.pageTitle}>Create</Text>
+			<Text style={styles.pageTitle}>{Title}</Text>
 			<View style={styles.form}>
-				<Pressable onPress={addImage}>
-					<View style={styles.addImgArea}>
-						<Text style={styles.addImgAreaText}>Add Image</Text>
-					</View>
+				<Pressable onPress={pickImage}>
+					{(recipe.image !== '') ?
+						<Image style={styles.addImgArea} source={{ uri: recipe.image}}/> :
+						<View style={styles.addImgArea}>
+							<Text style={styles.addImgAreaText}>Add Image</Text>
+						</View>
+					}
 				</Pressable>
 				{(error.type) && <Text style={styles.error}>Choose type of recipe</Text>}
 				<View style={styles.picker}>
@@ -112,10 +154,13 @@ export default function EditCreateForm({navigation}: PropsI) {
 					onPressFunc={cancelFunction}
 				/>
 				<SubmitButton
-					Title={'Create'}
+					Title={Title}
 					Style={styles.button}
-					Status={!buttonStatus}
-					onPressFunc={submitFunction}
+					Status={false}
+					onPressFunc={(): void => {
+						createNewRecipeFormData();
+						submitFunction(newRecipe);
+					}}
 				/>
 			</View>
 			<StatusBar style="auto" />

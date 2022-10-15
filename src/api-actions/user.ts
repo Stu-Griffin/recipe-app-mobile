@@ -6,7 +6,7 @@ class UserAPIActions {
 
 	async getUser(id: string) {
 		try {
-			const request = await axios.get(`${this.url}users/${id}`);
+			const request = await axios.get(`${this.url}${id}`);
 			return request.data;
 		} catch (error) {
 			console.log(error);
@@ -15,7 +15,7 @@ class UserAPIActions {
 
 	async signInUser(user: any) {
 		try {
-			const request = await axios.post(`${this.url}users/sign-in`, user);
+			const request = await axios.post(`${this.url}sign-in`, user);
 			return request.data;
 		} catch (error) {
 			console.log(error);
@@ -24,7 +24,7 @@ class UserAPIActions {
 
 	async signUpUser(user: any) {
 		try {
-			const request = await axios.post(`${this.url}users/sign-up`, user);
+			const request = await axios.post(`${this.url}sign-up`, user);
 			return request.data;
 		} catch (error) {
 			console.log(error);
@@ -36,7 +36,7 @@ class UserAPIActions {
 			const request = await axios({
 				data: user,
 				method: 'put',
-				url: `${this.url}users/${id}`,
+				url: `${this.url}${id}`,
 				headers: { 'Content-Type': 'multipart/form-data' },
 			});
 			return request.data;
@@ -46,4 +46,4 @@ class UserAPIActions {
 	}
 }
 
-export default new UserAPIActions(`${URL}api/`);
+export default new UserAPIActions(`${URL}api/users/`);
