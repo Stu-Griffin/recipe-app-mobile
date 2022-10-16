@@ -37,16 +37,21 @@ const recipeFormSlice = createSlice({
 				state[action.payload.key] = action.payload.value;
 			}
 		},
+		deleteFromRecipeForm: (state, action) => {
+			if(action.payload.key === 'ingredients' || action.payload.key === 'steps') {
+				state[action.payload.key] = state[action.payload.key].filter((el: string, id: number) => action.payload.value !== id);
+			}
+		},
 		reseteRecipeForm: (state) => {
 			state.rate = 0;
 			state.type = '';
 			state.title = '';
 			state.image = '';
-			state.steps = null;
+			state.steps = [];
 			state.authorId = '';
 			state.authorLogin = '';
 			state.description = '';
-			state.ingredients = null;
+			state.ingredients = [];
 		},
 	}
 });
@@ -92,6 +97,6 @@ export type RecipeFormRootState = ReturnType<typeof recipeFormSlice.reducer>;
 
 export const { changeUser, reseteUser, setUser } = userSlice.actions;
 export const { changeUserForm, reseteUserForm } = userFormSlice.actions;
-export const { changeRecipeForm, reseteRecipeForm } = recipeFormSlice.actions;
+export const { changeRecipeForm, reseteRecipeForm, deleteFromRecipeForm } = recipeFormSlice.actions;
 
 export const store = configureStore({ reducer: {user: userSlice.reducer, userForm: userFormSlice.reducer, recipeForm: recipeFormSlice.reducer} });

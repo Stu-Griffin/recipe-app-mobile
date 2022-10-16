@@ -5,12 +5,14 @@ import React, { useEffect, useState } from 'react';
 import userAPIActions from '../../api-actions/user';
 import { useDispatch, useSelector } from 'react-redux';
 import InputArea from '../reusable-components/InputArea';
+import { showMessage } from 'react-native-flash-message';
 import { changeUserForm, UserRootState } from '../../redux';
 import AddButton from '../../../assets/icons/add-button.svg';
 import SubmitButton from '../reusable-components/SubmitButton';
 import ArrowLeftIcon from '../../../assets/icons/arrow-left.svg';
 import emailValidation from '../../extra-functions/email-validation';
 import regularValidation from '../../extra-functions/regular-validation';
+import { getTypeForFlashMsg, getMessageForFlashMsg } from '../../extra-functions/flash-message';
 import { StyleSheet, View, Image, Text, Pressable, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 
 interface PropsI {
@@ -57,6 +59,12 @@ export default function Profile({navigation}: PropsI) {
 		try {
 			const response = await userAPIActions.changeUser(id, newUser);
 			console.log(response);
+			showMessage({
+				duration: 5000,
+				description: response.data,
+				type: getTypeForFlashMsg(response.status),
+				message: getMessageForFlashMsg(response.status),
+			});
 		} catch (error) {
 			console.log(error);
 		}
@@ -143,7 +151,7 @@ export default function Profile({navigation}: PropsI) {
 					onPressFunc={buttonAction}
 				/>
 			</ScrollView>
-			<StatusBar style="auto" />
+			<StatusBar style="auto"/>
 		</SafeAreaView>
 	);
 }

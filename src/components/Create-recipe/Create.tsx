@@ -2,7 +2,6 @@ import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { UserRootState } from '../../redux';
 import { StyleSheet, View } from 'react-native';
-import FlashMessage from 'react-native-flash-message';
 import { useDispatch, useSelector } from 'react-redux';
 import recipeAPIActions from '../../api-actions/recipe';
 import { showMessage } from 'react-native-flash-message';
@@ -39,12 +38,16 @@ export default function Create({navigation}: PropsI) {
 						});
 						navigation.navigate('home');
 					} catch(error) {
-						console.log(error);
+						showMessage({
+							duration: 2500,
+							type: getTypeForFlashMsg(404),
+							message: getMessageForFlashMsg(404),
+							description: 'We are so sorry, there was an error',
+						});
 					}
 				}}
 			/>
 			<StatusBar style="auto" />
-			<FlashMessage position="top"/>
 		</View>
 	);
 }

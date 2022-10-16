@@ -29,11 +29,13 @@ const typesArr = ['Appetizers', 'Salads', 'Soups', 'Main', 'Desserts'];
 export default function EditCreateForm({navigation, Title, submitFunction}: PropsI) {
 	const dispatch = useDispatch();
 	const newRecipe: any = new FormData();
+	const [key, setKey] = useState<string>('');
 	const [buttonStatus, setButtonStatus] = useState<boolean>(false);
 	const [recipeBuffer, setRecipeBuffer] = useState<RecipeBufferI>();
 	const user = useSelector((store: RecipeFormRootState) => store.user);
 	const recipe = useSelector((store: RecipeFormRootState) => store.recipeForm);
-	const [error, setError] = useState<RecipeFormIError>({title: null, description: null, image: null, type: null});
+	const [error, setError] = useState<RecipeFormIError>({ingredients: null, steps: null, title: null, description: null, image: null, type: null});
+
 
 	useEffect((): void => {
 		dispatch(changeRecipeForm({value: user.id, key: 'authorId'}));
@@ -44,15 +46,21 @@ export default function EditCreateForm({navigation, Title, submitFunction}: Prop
 		setButtonStatus(Object.values(error).every((el: boolean) => (el===null)?false:((el===false)?true:false)));
 	}, [error]);
 
+	useEffect((): void => {
+		if(key !== '') {
+			(recipe[key]?.length === 0) ? setError({...error, [key]: true}) : setError({...error, [key]: false});
+		}
+	}, [recipe, key]);
+
 	const refreshFunc = (): void => {
 		setButtonStatus(false);
-		setError({title: false, description: false, image: false, type: false});
+		setError({ingredients: null, steps: null, title: null, description: null, image: null, type: null});
 	};
 
 	const cancelFunction = (): void => {
 		refreshFunc();
 		dispatch(reseteRecipeForm());
-		navigation.navigate('sign-up');
+		navigation.navigate('home');
 	};
 
 	const pickerFunc = (value: string): void => {
@@ -71,23 +79,28 @@ export default function EditCreateForm({navigation, Title, submitFunction}: Prop
 		if(!regularValidation(recipe.ingredients)) newRecipe.append('ingredients', recipe.ingredients);
 	};
 
-	const pickImage = async () => {
+	const pickImage = async (): Promise<void> => {
 		// No permissions request is necessary for launching the image library
-		const { uri, cancelled }: any = await ImagePicker.launchImageLibraryAsync({
-			quality: 1,
-			aspect: [4, 3],
-			allowsEditing: true,
-			mediaTypes: ImagePicker.MediaTypeOptions.All,
-		});
-		const imageExtension: string = uri.split('.').reverse()[0];
-		if (!cancelled) {
-			setRecipeBuffer({
-				uri: uri,
-				fileName: 'image',
-				type: `image/${imageExtension}`,
-				name: `avatar.${imageExtension}`,
+		try {
+			const { uri, cancelled }: any = await ImagePicker.launchImageLibraryAsync({
+				quality: 1,
+				aspect: [4, 3],
+				allowsEditing: true,
+				mediaTypes: ImagePicker.MediaTypeOptions.All,
 			});
-			dispatch(changeRecipeForm({value :uri, key: 'image'}));
+			const imageExtension: string = uri.split('.').reverse()[0];
+			if (!cancelled) {
+				setRecipeBuffer({
+					uri: uri,
+					fileName: 'image',
+					type: `image/${imageExtension}`,
+					name: `avatar.${imageExtension}`,
+				});
+				setError({...error, image: false});
+				dispatch(changeRecipeForm({value :uri, key: 'image'}));
+			}
+		} catch (error) {
+			console.log(error);
 		}
 	};
 	
@@ -141,9 +154,15 @@ export default function EditCreateForm({navigation, Title, submitFunction}: Prop
 				/>
 				<InputWithList
 					Title='Ingredients'
+					ErrorHandler={(key: string) => {
+						setKey(key);
+					}}
 				/>
 				<InputWithList
 					Title='Steps'
+					ErrorHandler={(key: string) => {
+						setKey(key);
+					}}
 				/>
 			</View>
 			<View style={styles.buttonContainer}>
@@ -156,7 +175,7 @@ export default function EditCreateForm({navigation, Title, submitFunction}: Prop
 				<SubmitButton
 					Title={Title}
 					Style={styles.button}
-					Status={false}
+					Status={!buttonStatus}
 					onPressFunc={(): void => {
 						createNewRecipeFormData();
 						submitFunction(newRecipe);

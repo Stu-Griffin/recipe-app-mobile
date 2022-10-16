@@ -2,7 +2,6 @@ import { URL } from '../../../config';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import userAPIActions from '../../api-actions/user';
-import FlashMessage from 'react-native-flash-message';
 import { useDispatch, useSelector } from 'react-redux';
 import { showMessage } from 'react-native-flash-message';
 import InputArea from '../reusable-components/InputArea';
@@ -112,7 +111,6 @@ export default function Home({navigation}: PropsI) {
 				</TouchableOpacity>
 			</View>
 			<StatusBar style="auto" />
-			<FlashMessage position="top"/>
 		</View>
 	);
 }
