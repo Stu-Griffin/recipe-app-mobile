@@ -4,14 +4,14 @@ import { URL } from '../../config';
 class RecipeAPIActions {
 	constructor(protected url: string) {}
 
-	// async getAllRecipes(id: string) {
-	// 	try {
-	// 		const request = await axios.get(`${this.url}${id}`);
-	// 		return request.data;
-	// 	} catch (error) {
-	// 		console.log(error);
-	// 	}
-	// }
+	async getAllRecipes(type: string, page: string) {
+		try {
+			const request = await axios.get(this.url, { params: { type, page } });
+			return request.data;
+		} catch (error) {
+			console.log(error);
+		}
+	}
 
 	// async getOneRecipe(id: string) {
 	// 	try {

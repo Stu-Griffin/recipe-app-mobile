@@ -2,40 +2,46 @@ import { URL } from '../../../config';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import userAPIActions from '../../api-actions/user';
+import StarIcon from '../../../assets/icons/star.svg';
 import { useDispatch, useSelector } from 'react-redux';
+import recipeAPIActions from '../../api-actions/recipe';
 import { showMessage } from 'react-native-flash-message';
 import InputArea from '../reusable-components/InputArea';
+import { LinearGradient } from 'expo-linear-gradient';
 import AddIcon from '../../../assets/icons/add-button.svg';
 import { changeUser, UserRootState, setUser } from '../../redux';
 import FilterSettingsIcon from '../../../assets/icons/filter-setting.svg';
-import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import { getTypeForFlashMsg, getMessageForFlashMsg } from '../../extra-functions/flash-message';
 
 interface PropsI {
 	navigation: any;
 }
 
-const typesArr = ['All', 'Appetizers', 'Salads', 'Soups', 'Main', 'Desserts'];
+const typesArr = ['Appetizers', 'Salads', 'Soups', 'Main', 'Desserts'];
 
 export default function Home({navigation}: PropsI) {
 	const dispatch = useDispatch();
 	const [search, setSearch] = useState<string>('');
+	const [currentPage, setCurrentPage] = useState<number>(1);
+	const [recipeList, setRecipeList] = useState<Array<any>>([]);
 	const user: any = useSelector((store: UserRootState) => store.user);
+	const [activeType, setActiveType] = useState<string>(typesArr[0].toLocaleLowerCase());
 
 	useEffect((): void => {
 		getUserInf();
 	}, [user.id]);
 
-	const move = (route: string): void => {
-		navigation.navigate(route);
+	useEffect((): void => {
+		getRecipes();
+	}, [activeType, currentPage]);
+
+	const loadMoreItem = () => {
+		setCurrentPage(currentPage + 1);
 	};
 
-	const renderItem = ({ item }: any) => {
-		return(
-			<TouchableOpacity style={styles.recipesBtn}>
-				<Text style={styles.recipesBtnTitle}>{item}</Text>
-			</TouchableOpacity>
-		);
+	const move = (route: string): void => {
+		navigation.navigate(route);
 	};
 
 	const getUserInf = async (): Promise<void> => {
@@ -59,6 +65,47 @@ export default function Home({navigation}: PropsI) {
 		} catch (error) {
 			console.log(error);
 		}
+	};
+
+	const getRecipes = async (): Promise<void> => {
+		try {
+			const { data } = await recipeAPIActions.getAllRecipes(activeType, currentPage.toString());
+			setRecipeList([...recipeList, ...data]);
+			// setRecipeList(data);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const renderRecipeItem = ({ item }: any) => {
+		return(
+			<TouchableOpacity style={styles.recipesBlockArea}>
+				<ImageBackground source={{uri: `${URL}${item.image}`}} style={styles.recipesBlock}>
+					<LinearGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 1)']} style={styles.linearGradient}>
+						<View style={styles.rateBox}>
+							<StarIcon width={8} height={8}/>
+							<Text>{item.rate}</Text>
+						</View>
+						<View style={styles.recipeInf}>
+							<Text style={styles.recipeTitle}>{item.title}</Text>
+							<Text style={styles.recipeAuthor}>{item.authorLogin}</Text>
+						</View>
+					</LinearGradient>
+				</ImageBackground>
+			</TouchableOpacity>
+		);
+	};
+
+	const renderNavigationItem = ({ item }: any) => {
+		return(
+			<TouchableOpacity onPress={() => {
+				setCurrentPage(1);
+				setRecipeList([]);
+				setActiveType(item.toLowerCase());
+			}} style={styles.recipesBtn}>
+				<Text style={styles.recipesBtnTitle}>{item}</Text>
+			</TouchableOpacity>
+		);
 	};
 
 	return (
@@ -101,8 +148,18 @@ export default function Home({navigation}: PropsI) {
 				<FlatList
 					data={typesArr}
 					horizontal={true}
-					renderItem={renderItem}
+					renderItem={renderNavigationItem}
 					keyExtractor={(item: string, id: number) => id.toString()}
+				/>
+			</View>
+			<View style={styles.recipeArea}>
+				<FlatList
+					numColumns={2}
+					data={recipeList}
+					onEndReachedThreshold={0}
+					onEndReached={loadMoreItem}
+					renderItem={renderRecipeItem}
+					keyExtractor={(item: any) => item['_id']}
 				/>
 			</View>
 			<View style={styles.addRecipeBtn}>
@@ -130,6 +187,49 @@ const styles = StyleSheet.create({
 	headerText: {
 
 	},
+	recipeArea: {
+		height: 460,
+		paddingVertical: 10,
+		alignItems: 'center',
+	},
+	recipesBlockArea: {
+		width: 150,
+		height: 150,
+		marginVertical: 10,
+		marginHorizontal: 5,
+	},
+	linearGradient: {
+		width: 150,
+		height: 150,
+		paddingVertical: 15,
+		paddingHorizontal: 15,
+		justifyContent: 'space-between'
+	},
+	recipesBlock: {
+		width: 150,
+		height: 150,
+	},
+	rateBox: {
+		width: 35,
+		marginLeft: '75%',
+		borderRadius: 1000,
+		flexDirection: 'row',
+		alignItems: 'center',
+		paddingHorizontal: 5,
+		backgroundColor: '#FFE1B3',
+		justifyContent: 'space-around',
+	},
+	recipeInf: {
+
+	},
+	recipeTitle: {
+		fontSize: 15,
+		color: '#FFFFFF'
+	},
+	recipeAuthor: {
+		fontSize: 12,
+		color: '#A9A9A9'
+	},
 	title: {
 		fontSize: 25,
 		fontWeight: 'bold',
@@ -147,7 +247,7 @@ const styles = StyleSheet.create({
 		backgroundColor: '#FFCE80',
 	},
 	addRecipeBtn: {
-		top: 475,
+		top: 20,
 		position: 'relative',
 		alignItems: 'center',
 		justifyContent: 'center',
