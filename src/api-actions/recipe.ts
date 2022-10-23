@@ -22,14 +22,14 @@ class RecipeAPIActions {
 	// 	}
 	// }
 
-	// async getAuthorsRecipes(id: string) {
-	// 	try {
-	// 		const request = await axios.get(`${this.url}${id}`);
-	// 		return request.data;
-	// 	} catch (error) {
-	// 		console.log(error);
-	// 	}
-	// }
+	async getAuthorsRecipes(id: string) {
+		try {
+			const request = await axios.get(`${this.url}author/${id}`);
+			return request.data;
+		} catch (error) {
+			console.log(error);
+		}
+	}
 
 	async changeRecipe(id: string, recipe: any) {
 		try {

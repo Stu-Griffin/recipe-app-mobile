@@ -178,6 +178,8 @@ export default function EditCreateForm({navigation, Title, submitFunction}: Prop
 					onPressFunc={(): void => {
 						createNewRecipeFormData();
 						submitFunction(newRecipe);
+						refreshFunc();
+						dispatch(reseteRecipeForm());
 					}}
 				/>
 			</View>

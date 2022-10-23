@@ -2,16 +2,16 @@ import { URL } from '../../../config';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import userAPIActions from '../../api-actions/user';
-import { LinearGradient } from 'expo-linear-gradient';
-import StarIcon from '../../../assets/icons/star.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import recipeAPIActions from '../../api-actions/recipe';
 import { showMessage } from 'react-native-flash-message';
 import InputArea from '../reusable-components/InputArea';
+import RecipeBox from '../reusable-components/RecipeBox';
 import AddIcon from '../../../assets/icons/add-button.svg';
+import NavigationButton from '../reusable-components/NavigationButton';
 import FilterSettingsIcon from '../../../assets/icons/filter-setting.svg';
 import { UserRootState, setUser, getRecipeForm, changeRecipeForm } from '../../redux';
-import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, ImageBackground } from 'react-native';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
 import { getTypeForFlashMsg, getMessageForFlashMsg } from '../../extra-functions/flash-message';
 
 interface PropsI {
@@ -41,9 +41,6 @@ export default function Home({navigation}: PropsI) {
 	};
 
 	const move = (route: string): void => {
-		setCurrentPage(1);
-		setRecipeList([]);
-		setActiveType(typesArr[0].toLocaleLowerCase());
 		navigation.navigate(route);
 	};
 
@@ -78,40 +75,6 @@ export default function Home({navigation}: PropsI) {
 		} catch (error) {
 			console.log(error);
 		}
-	};
-
-	const renderRecipeItem = ({ item }: any) => {
-		return(
-			<TouchableOpacity onPress={() => {
-				move('edit');
-				dispatch(getRecipeForm(item));
-			}} style={styles.recipesBlockArea}>
-				<ImageBackground source={{uri: `${URL}${item.image}`}} style={styles.recipesBlock}>
-					<LinearGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 1)']} style={styles.linearGradient}>
-						<View style={styles.rateBox}>
-							<StarIcon width={8} height={8}/>
-							<Text>{item.rate}</Text>
-						</View>
-						<View style={styles.recipeInf}>
-							<Text style={styles.recipeTitle}>{item.title}</Text>
-							<Text style={styles.recipeAuthor}>{item.authorLogin}</Text>
-						</View>
-					</LinearGradient>
-				</ImageBackground>
-			</TouchableOpacity>
-		);
-	};
-
-	const renderNavigationItem = ({ item }: any) => {
-		return(
-			<TouchableOpacity onPress={() => {
-				setCurrentPage(1);
-				setRecipeList([]);
-				setActiveType(item.toLowerCase());
-			}} style={[styles.recipesBtn, (item.toLocaleLowerCase() === activeType) && styles.activeRecipesBtn]}>
-				<Text style={(item.toLocaleLowerCase() === activeType) ? styles.activeRecipesBtnTitle : styles.unActiveRecipesBtnTitle}>{item}</Text>
-			</TouchableOpacity>
-		);
 	};
 
 	return (
@@ -154,7 +117,19 @@ export default function Home({navigation}: PropsI) {
 				<FlatList
 					data={typesArr}
 					horizontal={true}
-					renderItem={renderNavigationItem}
+					renderItem={({ item }) => {
+						return(
+							<NavigationButton
+								item={item}
+								activeType={activeType}
+								onPressFunc={(item: any) => {
+									setCurrentPage(1);
+									setRecipeList([]);
+									setActiveType(item.toLowerCase());
+								}}
+							/>
+						);
+					}}
 					keyExtractor={(item: string, id: number) => id.toString()}
 				/>
 			</View>
@@ -164,7 +139,17 @@ export default function Home({navigation}: PropsI) {
 					data={recipeList}
 					onEndReachedThreshold={0}
 					onEndReached={loadMoreItem}
-					renderItem={renderRecipeItem}
+					renderItem={({ item }) => {
+						return(
+							<RecipeBox 
+								item={item} 
+								onPressFunc={(recipe: any) => {
+									move('edit');
+									dispatch(getRecipeForm(recipe));
+								}}
+							/>
+						);
+					}}
 					keyExtractor={(item: any) => item['_id']}
 				/>
 			</View>
@@ -201,44 +186,6 @@ const styles = StyleSheet.create({
 		height: 460,
 		paddingVertical: 10,
 		alignItems: 'center',
-	},
-	recipesBlockArea: {
-		width: 150,
-		height: 150,
-		marginVertical: 10,
-		marginHorizontal: 5,
-	},
-	linearGradient: {
-		width: 150,
-		height: 150,
-		paddingVertical: 15,
-		paddingHorizontal: 15,
-		justifyContent: 'space-between'
-	},
-	recipesBlock: {
-		width: 150,
-		height: 150,
-	},
-	rateBox: {
-		width: 35,
-		marginLeft: '75%',
-		borderRadius: 1000,
-		flexDirection: 'row',
-		alignItems: 'center',
-		paddingHorizontal: 5,
-		backgroundColor: '#FFE1B3',
-		justifyContent: 'space-around',
-	},
-	recipeInf: {
-
-	},
-	recipeTitle: {
-		fontSize: 15,
-		color: '#FFFFFF'
-	},
-	recipeAuthor: {
-		fontSize: 12,
-		color: '#A9A9A9'
 	},
 	title: {
 		fontSize: 25,
