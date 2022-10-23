@@ -2,15 +2,15 @@ import { URL } from '../../../config';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import userAPIActions from '../../api-actions/user';
+import { LinearGradient } from 'expo-linear-gradient';
 import StarIcon from '../../../assets/icons/star.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import recipeAPIActions from '../../api-actions/recipe';
 import { showMessage } from 'react-native-flash-message';
 import InputArea from '../reusable-components/InputArea';
-import { LinearGradient } from 'expo-linear-gradient';
 import AddIcon from '../../../assets/icons/add-button.svg';
-import { changeUser, UserRootState, setUser } from '../../redux';
 import FilterSettingsIcon from '../../../assets/icons/filter-setting.svg';
+import { UserRootState, setUser, getRecipeForm, changeRecipeForm } from '../../redux';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import { getTypeForFlashMsg, getMessageForFlashMsg } from '../../extra-functions/flash-message';
 
@@ -41,6 +41,9 @@ export default function Home({navigation}: PropsI) {
 	};
 
 	const move = (route: string): void => {
+		setCurrentPage(1);
+		setRecipeList([]);
+		setActiveType(typesArr[0].toLocaleLowerCase());
 		navigation.navigate(route);
 	};
 
@@ -79,7 +82,10 @@ export default function Home({navigation}: PropsI) {
 
 	const renderRecipeItem = ({ item }: any) => {
 		return(
-			<TouchableOpacity style={styles.recipesBlockArea}>
+			<TouchableOpacity onPress={() => {
+				move('edit');
+				dispatch(getRecipeForm(item));
+			}} style={styles.recipesBlockArea}>
 				<ImageBackground source={{uri: `${URL}${item.image}`}} style={styles.recipesBlock}>
 					<LinearGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 1)']} style={styles.linearGradient}>
 						<View style={styles.rateBox}>
@@ -102,8 +108,8 @@ export default function Home({navigation}: PropsI) {
 				setCurrentPage(1);
 				setRecipeList([]);
 				setActiveType(item.toLowerCase());
-			}} style={styles.recipesBtn}>
-				<Text style={styles.recipesBtnTitle}>{item}</Text>
+			}} style={[styles.recipesBtn, (item.toLocaleLowerCase() === activeType) && styles.activeRecipesBtn]}>
+				<Text style={(item.toLocaleLowerCase() === activeType) ? styles.activeRecipesBtnTitle : styles.unActiveRecipesBtnTitle}>{item}</Text>
 			</TouchableOpacity>
 		);
 	};
@@ -163,7 +169,11 @@ export default function Home({navigation}: PropsI) {
 				/>
 			</View>
 			<View style={styles.addRecipeBtn}>
-				<TouchableOpacity onPress={() => move('create')}>
+				<TouchableOpacity onPress={() => {
+					move('create');
+					dispatch(changeRecipeForm({value: user.id, key: 'authorId'}));
+					dispatch(changeRecipeForm({value: user.login, key: 'authorLogin'}));
+				}}>
 					<AddIcon width={55} height={55}/>
 				</TouchableOpacity>
 			</View>
@@ -286,9 +296,14 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		marginHorizontal: 10,
 		justifyContent: 'center',
+	},
+	activeRecipesBtn: {
 		backgroundColor: '#129575',
 	},
-	recipesBtnTitle: {
+	unActiveRecipesBtnTitle: {
+		color: '#71B1A1',
+	},
+	activeRecipesBtnTitle: {
 		color: 'white',
 	},
 });

@@ -1,4 +1,5 @@
 import InputArea from './InputArea';
+import { URL } from '../../../config';
 import SubmitButton from './SubmitButton';
 import { StatusBar } from 'expo-status-bar';
 import InputWithList from './InputWithList';
@@ -36,14 +37,8 @@ export default function EditCreateForm({navigation, Title, submitFunction}: Prop
 	const recipe = useSelector((store: RecipeFormRootState) => store.recipeForm);
 	const [error, setError] = useState<RecipeFormIError>({ingredients: null, steps: null, title: null, description: null, image: null, type: null});
 
-
 	useEffect((): void => {
-		dispatch(changeRecipeForm({value: user.id, key: 'authorId'}));
-		dispatch(changeRecipeForm({value: user.login, key: 'authorLogin'}));
-	}, [user]);
-
-	useEffect((): void => {
-		setButtonStatus(Object.values(error).every((el: boolean) => (el===null)?false:((el===false)?true:false)));
+		(Title === 'Edit') ? setButtonStatus(Object.values(error).some((el: boolean) => (el===null)?false:((el===false)?true:false))) : setButtonStatus(Object.values(error).every((el: boolean) => (el===null)?false:((el===false)?true:false)));
 	}, [error]);
 
 	useEffect((): void => {
@@ -103,6 +98,10 @@ export default function EditCreateForm({navigation, Title, submitFunction}: Prop
 			console.log(error);
 		}
 	};
+
+	const getImgUrl = (uri: string) => {
+		return (uri.split('/')[0] === 'assets') ? `${URL}${recipe.image}` : recipe.image;
+	};
 	
 	return (
 		<ScrollView style={styles.container}>
@@ -110,7 +109,7 @@ export default function EditCreateForm({navigation, Title, submitFunction}: Prop
 			<View style={styles.form}>
 				<Pressable onPress={pickImage}>
 					{(recipe.image !== '') ?
-						<Image style={styles.addImgArea} source={{ uri: recipe.image}}/> :
+						<Image style={styles.addImgArea} source={{ uri: getImgUrl(recipe.image)}}/> :
 						<View style={styles.addImgArea}>
 							<Text style={styles.addImgAreaText}>Add Image</Text>
 						</View>

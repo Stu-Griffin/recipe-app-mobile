@@ -1,5 +1,6 @@
 import React from 'react';
 import Home from './Home/Home';
+import Edit from './Edit-recipe/Edit';
 import Profile from './Profile/Profile';
 import Create from './Create-recipe/Create';
 import ListIcon from '../../assets/icons/list.svg';
@@ -44,6 +45,7 @@ function HomeNavigation() {
 	return (
 		<Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="home">
 			<Stack.Screen name="home" component={Home} />
+			<Stack.Screen name="edit" component={Edit} />
 			<Stack.Screen name="create" component={Create} />
 			<Stack.Screen name="profile-page" component={ProfileNavigation} />
 		</Stack.Navigator>

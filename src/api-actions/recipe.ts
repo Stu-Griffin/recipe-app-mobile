@@ -31,19 +31,19 @@ class RecipeAPIActions {
 	// 	}
 	// }
 
-	// async changeRecipe(id: string, user: any) {
-	// 	try {
-	// 		const request = await axios({
-	// 			data: user,
-	// 			method: 'put',
-	// 			url: `${this.url}${id}`,
-	// 			headers: { 'Content-Type': 'multipart/form-data' },
-	// 		});
-	// 		return request.data;
-	// 	} catch (error) {
-	// 		console.log(error);
-	// 	}
-	// }
+	async changeRecipe(id: string, recipe: any) {
+		try {
+			const request = await axios({
+				data: recipe,
+				method: 'put',
+				url: `${this.url}${id}`,
+				headers: { 'Content-Type': 'multipart/form-data' },
+			});
+			return request.data;
+		} catch (error) {
+			console.log(error);
+		}
+	}
 
 	async createRecipe(recipe: any) {
 		try {
