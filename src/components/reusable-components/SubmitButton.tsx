@@ -17,6 +17,12 @@ export default function SubmitButton({Title, Style, Status, onPressFunc}: PropsI
 }
 
 const styles = StyleSheet.create({
+	text: {
+		fontSize: 16,
+		color: 'white',
+		fontWeight: 'bold',
+		textAlign: 'center',
+	},
 	button: {
 		marginTop: 10,
 		paddingTop: 15,
@@ -26,10 +32,4 @@ const styles = StyleSheet.create({
 		paddingBottom: 15,
 		backgroundColor: '#129575',
 	},
-	text: {
-		fontSize: 16,
-		color: 'white',
-		fontWeight: 'bold',
-		textAlign: 'center',
-	}
 });

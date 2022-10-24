@@ -1,10 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import recipeAPIActions from '../../api-actions/recipe';
-import RecipeBox from '../reusable-components/RecipeBox';
-import { getRecipeForm, UserRootState } from '../../redux';
-import ArrowLeftIcon from '../../../assets/icons/arrow-left.svg';
+import recipeAPIActions from '../../../api-actions/recipe';
+import RecipeBox from '../../reusable-components/RecipeBox';
+import { getRecipeForm, UserRootState } from '../../../redux';
+import ArrowLeftIcon from '../../../../assets/icons/arrow-left';
 import { StyleSheet, View, Text, TouchableOpacity, FlatList } from 'react-native';
 
 interface PropsI {
@@ -36,10 +36,12 @@ export default function AuthoreRecepies({ navigation }: PropsI) {
 	return (
 		<View style={styles.container}>
 			<View style={styles.pageTitleArea}>
-				<TouchableOpacity onPress={() => {
-					move('home');
-				}}>
-					<ArrowLeftIcon style={styles.goBackIcon} width={30} height={30}/>
+				<TouchableOpacity
+					onPress={() => {
+						move('home');
+					}}
+				>
+					<ArrowLeftIcon style={styles.goBackIcon} width={30} height={30} />
 				</TouchableOpacity>
 				<Text style={styles.pageTitle}>Your recepies</Text>
 			</View>
@@ -48,11 +50,11 @@ export default function AuthoreRecepies({ navigation }: PropsI) {
 					numColumns={2}
 					data={recipeList}
 					renderItem={({ item }) => {
-						return(
-							<RecipeBox 
-								item={item} 
+						return (
+							<RecipeBox
+								item={item}
 								onPressFunc={(recipe: any) => {
-									move('edit');
+									move('recipe');
 									dispatch(getRecipeForm(recipe));
 								}}
 							/>
@@ -67,11 +69,6 @@ export default function AuthoreRecepies({ navigation }: PropsI) {
 }
 
 const styles = StyleSheet.create({
-	pageTitleArea: {
-		alignItems: 'center',
-		flexDirection: 'row',
-		justifyContent: 'center',
-	},
 	pageTitle: {
 		fontSize: 30,
 		marginTop: 25,
@@ -91,5 +88,10 @@ const styles = StyleSheet.create({
 		height: 460,
 		paddingVertical: 10,
 		alignItems: 'center',
+	},
+	pageTitleArea: {
+		alignItems: 'center',
+		flexDirection: 'row',
+		justifyContent: 'center',
 	},
 });

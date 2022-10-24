@@ -23,9 +23,13 @@ export default function InputArea({Value, ChangeValue, Title, ErrorMsg, ErrorSta
 } 
 
 const styles = StyleSheet.create({
-	container: {
-		paddingTop: 10,
-		paddingBottom: 10,
+	title: {
+		fontSize: 18,
+	},
+	error: {
+		color: 'red',
+		fontSize: 15,
+		marginLeft: 8,
 	},
 	input: {
 		marginTop: 10,
@@ -42,12 +46,8 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'flex-start',
 	},
-	title: {
-		fontSize: 18,
+	container: {
+		paddingTop: 10,
+		paddingBottom: 10,
 	},
-	error: {
-		color: 'red',
-		fontSize: 15,
-		marginLeft: 8,
-	}
 });

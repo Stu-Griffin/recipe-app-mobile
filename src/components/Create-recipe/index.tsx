@@ -1,8 +1,6 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
-import { RecipeFormRootState } from '../../redux';
-import { useDispatch, useSelector } from 'react-redux';
 import recipeAPIActions from '../../api-actions/recipe';
 import { showMessage } from 'react-native-flash-message';
 import CreareEditForm from '../reusable-components/EditCreateForm';
@@ -12,32 +10,29 @@ interface PropsI {
 	navigation: any;
 }
 
-export default function Edit({navigation}: PropsI) {
-	const dispatch = useDispatch();
-	const recipe: any = useSelector((store: RecipeFormRootState) => store.recipeForm);
-
+export default function Create({ navigation }: PropsI) {
 	return (
 		<View style={styles.container}>
 			<CreareEditForm
-				Title='Edit'
+				Title='Create'
 				navigation={navigation}
-				submitFunction={async (newRecipe: any): Promise<void> => {
+				submitFunction={async (recipe: any): Promise<void> => {
 					let message = '';
 					try {
-						const { status } = await recipeAPIActions.changeRecipe(recipe['_id'], newRecipe);
-						if(status === 200) {
-							message = 'The changes were saved succesfully';
+						const response = await recipeAPIActions.createRecipe(recipe);
+						if(response.status === 200) {
+							message = 'The recipe was saved succesfully';
 						} else {
 							message = 'We are so sorry, there was an error';
 						}
 						showMessage({
 							duration: 2500,
 							description: message,
-							type: getTypeForFlashMsg(status),
-							message: getMessageForFlashMsg(status),
+							type: getTypeForFlashMsg(response.status),
+							message: getMessageForFlashMsg(response.status),
 						});
 						navigation.navigate('home');
-					} catch (error) {
+					} catch(error) {
 						showMessage({
 							duration: 2500,
 							type: getTypeForFlashMsg(404),

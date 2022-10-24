@@ -18,5 +18,5 @@
 		"lib": [ "dom", "dom.iterable", "esnext" ],
 	},
 	"extends": "expo/tsconfig.base",
-	"include": [ "src", "declaration.d.ts" ],
+	"include": [ "src" ],
 }

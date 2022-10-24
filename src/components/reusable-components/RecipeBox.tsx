@@ -1,14 +1,12 @@
 import React from 'react';
 import { URL } from '../../../config';
+import StarIcon from '../../../assets/icons/star';
 import { LinearGradient } from 'expo-linear-gradient';
-import StarIcon from '../../../assets/icons/star.svg';
 import { StyleSheet, View, Text, TouchableOpacity, ImageBackground } from 'react-native';
 
 export default function recipeBox({ item, onPressFunc }: any) {
 	return(
-		<TouchableOpacity onPress={() => {
-			onPressFunc(item);
-		}} style={styles.recipesBlockArea}>
+		<TouchableOpacity onPress={() => { onPressFunc(item); }} style={styles.recipesBlockArea}>
 			<ImageBackground source={{uri: `${URL}${item.image}`}} style={styles.recipesBlock}>
 				<LinearGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 1)']} style={styles.linearGradient}>
 					<View style={styles.rateBox}>

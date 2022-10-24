@@ -1,17 +1,16 @@
 import { StatusBar } from 'expo-status-bar';
-import { UserFormRootState } from '../../redux';
 import React, { useEffect, useState } from 'react';
-import userAPIActions from '../../api-actions/user';
+import userAPIActions from '../../../api-actions/user';
 import { useDispatch, useSelector } from 'react-redux';
-import { UserFormIErrorSignIn } from '../../types/user';
+import { UserFormIErrorSignIn } from '../../../types/user';
 import { showMessage } from 'react-native-flash-message';
-import InputArea from '../reusable-components/InputArea';
-import SubmitButton from '../reusable-components/SubmitButton';
-import emailValidation from '../../extra-functions/email-validation';
-import regularValidation from '../../extra-functions/regular-validation';
-import { changeUserForm, reseteUserForm, changeUser } from '../../redux';
+import InputArea from '../../reusable-components/InputArea';
+import SubmitButton from '../../reusable-components/SubmitButton';
+import emailValidation from '../../../extra-functions/email-validation';
+import regularValidation from '../../../extra-functions/regular-validation';
 import { StyleSheet, View, Text, Pressable, SafeAreaView } from 'react-native';
-import { getTypeForFlashMsg, getMessageForFlashMsg } from '../../extra-functions/flash-message';
+import { changeUserForm, reseteUserForm, changeUser, UserFormRootState } from '../../../redux';
+import { getTypeForFlashMsg, getMessageForFlashMsg } from '../../../extra-functions/flash-message';
 
 interface PropsI {
 	navigation: any;
@@ -26,6 +25,11 @@ export default function SignIn({navigation}: PropsI) {
 	useEffect((): void => {
 		setButtonStatus(Object.values(error).every((el: boolean) => el === false));
 	}, [error]);
+
+	const refreshFunc = (): void => {
+		setButtonStatus(false);
+		setError({email: null, password: null});
+	};
 
 	const buttonAction = async (): Promise<void> => {
 		try {
@@ -50,11 +54,6 @@ export default function SignIn({navigation}: PropsI) {
 		} catch (error) {
 			console.log(error);
 		}
-	};
-
-	const refreshFunc = (): void => {
-		setButtonStatus(false);
-		setError({email: null, password: null});
 	};
 
 	const navigateLinkFunc = (route: string): void => {
@@ -112,15 +111,6 @@ export default function SignIn({navigation}: PropsI) {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		paddingTop: 100,
-		paddingHorizontal: 30,
-	},
-	title: {
-		fontSize: 30,
-		fontWeight: 'bold',
-	},
 	text: {
 		fontSize: 20,
 	},
@@ -128,14 +118,23 @@ const styles = StyleSheet.create({
 		marginTop: 50,
 		justifyContent: 'space-around',
 	},
+	link: {
+		color: '#FF9C00',
+	},
+	title: {
+		fontSize: 30,
+		fontWeight: 'bold',
+	},
+	button: {
+		marginTop: 50,
+	},
 	linkArea: {
 		alignItems: 'center',
 		flexDirection: 'row',
 	},
-	link: {
-		color: '#FF9C00',
+	container: {
+		flex: 1,
+		paddingTop: 100,
+		paddingHorizontal: 30,
 	},
-	button: {
-		marginTop: 50,
-	}
 });

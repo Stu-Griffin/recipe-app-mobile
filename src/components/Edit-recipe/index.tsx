@@ -1,8 +1,8 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { StatusBar } from 'expo-status-bar';
-import { UserRootState } from '../../redux';
 import { StyleSheet, View } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { RecipeFormRootState } from '../../redux';
 import recipeAPIActions from '../../api-actions/recipe';
 import { showMessage } from 'react-native-flash-message';
 import CreareEditForm from '../reusable-components/EditCreateForm';
@@ -12,32 +12,31 @@ interface PropsI {
 	navigation: any;
 }
 
-export default function Create({navigation}: PropsI) {
-	const dispatch = useDispatch();
-	const user: any = useSelector((store: UserRootState) => store.user);
+export default function Edit({navigation}: PropsI) {
+	const recipe: any = useSelector((store: RecipeFormRootState) => store.recipeForm);
 
 	return (
 		<View style={styles.container}>
 			<CreareEditForm
-				Title='Create'
+				Title='Edit'
 				navigation={navigation}
-				submitFunction={async (recipe: any): Promise<void> => {
+				submitFunction={async (newRecipe: any): Promise<void> => {
 					let message = '';
 					try {
-						const response = await recipeAPIActions.createRecipe(recipe);
-						if(response.status === 200) {
-							message = 'The recipe was saved succesfully';
+						const { status } = await recipeAPIActions.changeRecipe(recipe['_id'], newRecipe);
+						if(status === 200) {
+							message = 'The changes were saved succesfully';
 						} else {
 							message = 'We are so sorry, there was an error';
 						}
 						showMessage({
 							duration: 2500,
 							description: message,
-							type: getTypeForFlashMsg(response.status),
-							message: getMessageForFlashMsg(response.status),
+							type: getTypeForFlashMsg(status),
+							message: getMessageForFlashMsg(status),
 						});
 						navigation.navigate('home');
-					} catch(error) {
+					} catch (error) {
 						showMessage({
 							duration: 2500,
 							type: getTypeForFlashMsg(404),

@@ -3,9 +3,7 @@ import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 export default function NavigationButton({ item, onPressFunc, activeType }: any) {
 	return(
-		<TouchableOpacity onPress={() => {
-			onPressFunc(item);
-		}} style={[styles.recipesBtn, (item.toLocaleLowerCase() === activeType) && styles.activeRecipesBtn]}>
+		<TouchableOpacity onPress={() => { onPressFunc(item); }} style={[styles.recipesBtn, (item.toLocaleLowerCase() === activeType) && styles.activeRecipesBtn]}>
 			<Text style={(item.toLocaleLowerCase() === activeType) ? styles.activeRecipesBtnTitle : styles.unActiveRecipesBtnTitle}>{item}</Text>
 		</TouchableOpacity>
 	);
