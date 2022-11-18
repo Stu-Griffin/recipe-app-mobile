@@ -144,7 +144,7 @@ export default function Home({navigation}: PropsI) {
 							<RecipeBox 
 								item={item} 
 								onPressFunc={(recipe: any) => {
-									move('edit');
+									move('recipe');
 									dispatch(getRecipeForm(recipe));
 								}}
 							/>

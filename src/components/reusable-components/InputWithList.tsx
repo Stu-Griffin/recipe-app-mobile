@@ -1,11 +1,11 @@
 import InputArea from './InputArea';
 import uuid from 'react-native-uuid';
 import SubmitButton from './SubmitButton';
+import { StyleSheet, View } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import DeleteIcon from '../../../assets/icons/delete';
+import StepIngredientItem from './StepIngredientItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { showMessage } from 'react-native-flash-message';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import regularValidation from '../../extra-functions/regular-validation';
 import { changeRecipeForm, RecipeFormRootState, deleteFromRecipeForm } from '../../redux';
 import { getTypeForFlashMsg, getMessageForFlashMsg } from '../../extra-functions/flash-message';
@@ -70,12 +70,13 @@ export default function InputWithList({Title, ErrorHandler}: PropsI) {
 			{
 				recipe[Title.toLowerCase()].map((el: string, id: number) => {
 					return (
-						<View style={styles.box} key={(uuid.v4()).toString()}>
-							<Text style={styles.text}>{el}</Text>
-							<TouchableOpacity onPress={() => { deleteItem(id); }}>
-								<DeleteIcon width={35} height={35}/>
-							</TouchableOpacity>
-						</View>
+						<StepIngredientItem
+							el={el}
+							id={id}
+							buttonType={'delete'}
+							key={(uuid.v4()).toString()}
+							action={() => { deleteItem(id); }}
+						/>
 					);
 				})
 			}
@@ -84,17 +85,6 @@ export default function InputWithList({Title, ErrorHandler}: PropsI) {
 } 
 
 const styles = StyleSheet.create({
-	box: {
-		paddingVertical: 5,
-		flexDirection: 'row',
-		alignItems: 'center',
-		borderBottomWidth: 1,
-		paddingHorizontal: 10,
-		justifyContent: 'space-between',
-	},
-	text: {
-		fontSize: 20
-	},
 	button: {
 		marginTop: 35,
 	},
