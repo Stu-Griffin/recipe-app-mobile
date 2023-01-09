@@ -1,10 +1,19 @@
-export interface RecipeFormIError {
-	type: boolean|null;
-	steps: boolean|null;
-	title: boolean|null;
-	image: boolean|null;
-	description: boolean|null;
-	ingredients: boolean|null;
+export interface UserI {
+	id: string;
+	login: string;
+	email: string;
+	avatar: string;
+	[index: string]: any;
+}
+
+export interface UserFormI {
+	email: string;
+	login: string;
+	avatar: string;
+	password: string;
+	[index: string]: any;
+	confirmPassword: string;
+	conditionAndTermsStatus: boolean;
 }
 export interface UserFormIErrorSignIn {
 	email: boolean|null;
